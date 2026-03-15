@@ -1,0 +1,16 @@
+[package]
+name = "wacore-derive"
+version = "1.0.0"
+edition = "2024"
+authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
+license = "MIT"
+repository = "https://github.com/jrevanaldi-ai/ruwa"
+description = "Derive macros for wacore protocol types"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+proc-macro2 = "1.0"
+quote = "1.0"
+syn = { version = "2.0", features = ["full", "extra-traits"] }

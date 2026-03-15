@@ -1,0 +1,36 @@
+[package]
+name = "wacore-binary"
+version = "1.0.0"
+edition = "2024"
+authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
+license = "MIT"
+repository = "https://github.com/jrevanaldi-ai/ruwa"
+description = "Binary data and constants for WhatsApp protocol"
+
+[package.metadata.cargo-shear]
+ignored = ["phf"]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+simd = []
+serde = ["dep:serde"]
+
+[dependencies]
+flate2 = { workspace = true }
+phf = { version = "0.13.1", default-features = false }
+serde = { workspace = true, optional = true }
+
+[build-dependencies]
+phf_codegen = "0.13.1"
+serde = { workspace = true, features = ["alloc"] }
+serde_json = { workspace = true, features = ["std"] }
+
+[dev-dependencies]
+iai-callgrind = { workspace = true }
+
+[[bench]]
+name = "binary_benchmark"
+harness = false

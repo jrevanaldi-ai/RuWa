@@ -1,0 +1,52 @@
+# Build directory
+/target/
+**/target/
+
+# Build artifacts
+*.rlib
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Cargo lock (keep for binaries, but ignore for libraries)
+# Cargo.lock
+
+# Database files
+/*.db*
+*.db
+*.db-shm
+*.db-wal
+
+# Environment
+.env
+.env.local
+
+# IDE
+/.vscode/
+/.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# WhatsApp store
+/whatsapp_store
+/.cargo
+
+# Documentation
+docs/
+
+# Claude
+.claude
+
+# Misc
+/*.xml
+/*.txt

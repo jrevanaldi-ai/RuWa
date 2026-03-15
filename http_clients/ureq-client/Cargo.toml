@@ -1,0 +1,23 @@
+[package]
+name = "ruwa-ureq-http-client"
+version = "1.0.0"
+edition = "2024"
+authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
+license = "MIT"
+repository = "https://github.com/jrevanaldi-ai/ruwa"
+description = "Ureq-based HTTP client implementation for RuWa"
+
+[features]
+default = []
+# Skip TLS certificate verification (for testing with mock servers)
+danger-skip-tls-verify = []
+
+[dependencies]
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true, features = ["rt"] }
+ureq = { version = "3.1.4", default-features = false, features = [
+    "rustls",
+    "json",
+] }
+wacore = { workspace = true }

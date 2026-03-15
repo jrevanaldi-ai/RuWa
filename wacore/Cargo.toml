@@ -1,0 +1,55 @@
+[package]
+name = "wacore"
+version = "1.0.0"
+edition = "2024"
+authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
+license = "MIT"
+repository = "https://github.com/jrevanaldi-ai/ruwa"
+description = "Core WhatsApp protocol implementation without runtime dependencies"
+
+[features]
+default = []
+simd = ["wacore-appstate/simd"]
+debug-snapshots = []
+
+[dependencies]
+aes = { workspace = true }
+aes-gcm = { workspace = true }
+anyhow = { workspace = true }
+async-channel = { workspace = true }
+async-trait = { workspace = true }
+base64 = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true, features = ["now", "serde"] }
+ctr = { workspace = true }
+flate2 = { workspace = true }
+hex = { workspace = true }
+hkdf = { workspace = true }
+hmac = { workspace = true }
+log = { workspace = true }
+md5 = "0.8.0"
+once_cell = { version = "1.19", default-features = false, features = ["std"] }
+pbkdf2 = { version = "0.12", default-features = false, features = ["hmac"] }
+prost = { workspace = true }
+protobuf = { version = "3", default-features = false }
+rand = { workspace = true }
+serde = { workspace = true }
+serde-big-array = { workspace = true }
+serde_json = { workspace = true, features = ["std"] }
+sha1 = { workspace = true }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+typed-builder = "0.23"
+wacore-appstate = { workspace = true }
+wacore-binary = { workspace = true, features = ["serde"] }
+wacore-derive = { workspace = true }
+wacore-libsignal = { workspace = true }
+wacore-noise = { workspace = true }
+waproto = { workspace = true }
+
+[dev-dependencies]
+iai-callgrind = { workspace = true }
+
+[[bench]]
+name = "reporting_token_benchmark"
+harness = false

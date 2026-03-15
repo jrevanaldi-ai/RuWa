@@ -1,0 +1,33 @@
+[package]
+name = "wacore-appstate"
+version = "1.0.0"
+edition = "2024"
+authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
+license = "MIT"
+repository = "https://github.com/jrevanaldi-ai/ruwa"
+description = "Appstate for WhatsApp protocol"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = []
+simd = ["wacore-binary/simd"]
+
+[dependencies]
+anyhow = { workspace = true }
+bytemuck = { workspace = true }
+hex = { workspace = true }
+hkdf = { workspace = true }
+log = { workspace = true }
+prost = { workspace = true }
+serde = { workspace = true }
+serde-big-array = { workspace = true }
+serde_json = { workspace = true, features = ["alloc"] }
+sha2 = { workspace = true }
+thiserror = { workspace = true }
+wacore-binary = { workspace = true, default-features = false, features = ["serde"] }
+wacore-libsignal = { workspace = true }
+waproto = { workspace = true }
+
+[dev-dependencies]
