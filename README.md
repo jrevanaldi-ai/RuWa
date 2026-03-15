@@ -16,10 +16,10 @@ Untuk pertanyaan lebih spesifik tentang library RuWa, bug reports, feature reque
 
 <div align="center">
 
-| [![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/62895416602000) | [![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/chrisjoo_uww) | [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/AstraluneSuport) | [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:support@nathan.christmas) |
-|:---:|:---:|:---:|:---:|
-| **WhatsApp** | **Instagram** | **Telegram** | **Email** |
-| +62 895-4166-02000 | @chrisjoo_uww | @AstraluneSuport | support@nathan.christmas |
+[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://wa.me/62895416602000)
+[![Instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://instagram.com/chrisjoo_uww)
+[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/AstraluneSuport)
+[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:support@nathan.christmas)
 
 </div>
 
