@@ -1,0 +1,31 @@
+[package]
+name = "ruwa-bot"
+version = "1.0.0"
+edition = "2021"
+authors = ["Nathan <support@nathan.christmas>"]
+description = "Example WhatsApp bot using RuWa library"
+license = "MIT"
+
+[dependencies]
+# RuWa WhatsApp library
+ruwa = { path = ".." }
+ruwa-sqlite-storage = { path = "../storages/sqlite-storage" }
+ruwa-tokio-transport = { path = "../transports/tokio-transport" }
+ruwa-ureq-http-client = { path = "../http_clients/ureq-client" }
+
+# Async runtime
+tokio = { version = "1.48", features = ["full"] }
+
+# Utilities
+log = "0.4"
+env_logger = "0.11"
+chrono = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+toml = "0.9"
+rand = "0.9"
+
+# Waproto for WhatsApp message types
+waproto = { path = "../waproto" }
+wacore = { path = "../wacore" }
