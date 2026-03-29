@@ -1,5 +1,5 @@
 [package]
-name = "wacore-noise"
+name = "wacore-noise-ng"
 version = "1.0.0"
 edition = "2024"
 authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
@@ -20,8 +20,8 @@ prost = { workspace = true }
 rand = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
-wacore-binary = { workspace = true }
-wacore-libsignal = { workspace = true }
-waproto = { workspace = true }
+wacore-binary-ng = { workspace = true }
+wacore-libsignal-ng = { workspace = true }
+waproto-ng = { workspace = true }
 
 [dev-dependencies]

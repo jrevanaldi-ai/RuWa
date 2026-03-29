@@ -4,8 +4,8 @@ use crate::types::events::{Event, OfflineSyncPreview};
 use async_trait::async_trait;
 use log::{debug, info, warn};
 use std::sync::Arc;
-use wacore::appstate::patch_decode::WAPatchName;
-use wacore_binary::node::{Node, NodeContent};
+use wacore_ng::appstate::patch_decode::WAPatchName;
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// Handler for `<ib>` (information broadcast) stanzas.
 ///

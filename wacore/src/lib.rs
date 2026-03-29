@@ -1,22 +1,22 @@
 #![cfg_attr(feature = "simd", feature(portable_simd))]
-extern crate self as wacore;
+extern crate self as wacore_ng;
 
 pub use aes_gcm;
-pub use wacore_appstate as appstate;
-pub use wacore_noise as noise;
+pub use wacore_appstate_ng as appstate;
+pub use wacore_noise_ng as noise;
 
 // Re-export derive macros
-pub use wacore_derive::{EmptyNode, ProtocolNode, StringEnum};
+pub use wacore_derive_ng::{EmptyNode, ProtocolNode, StringEnum};
 
 pub mod client;
 pub mod download;
 pub mod iq;
 pub mod protocol;
-pub use wacore_noise::framing;
+pub use wacore_noise_ng::framing;
 pub mod handshake;
 pub mod history_sync;
 pub mod ib;
-pub use wacore_libsignal as libsignal;
+pub use wacore_libsignal_ng as libsignal;
 pub mod messages;
 pub mod net;
 pub mod pair;

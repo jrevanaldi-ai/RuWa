@@ -1,5 +1,5 @@
 // Re-export transport types from wacore
-pub use wacore::net::{Transport, TransportEvent, TransportFactory};
+pub use wacore_ng::net::{Transport, TransportEvent, TransportFactory};
 
 #[cfg(feature = "tokio-transport")]
 pub use ruwa_tokio_transport::{TokioWebSocketTransport, TokioWebSocketTransportFactory};

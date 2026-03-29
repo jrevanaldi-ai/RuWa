@@ -5,11 +5,11 @@
 //! 2. REMOVE mutations reference entries we don't have locally (hasMissingRemove)
 
 use prost::Message;
-use wacore::appstate::WAPATCH_INTEGRITY;
-use wacore::appstate::hash::{HashState, generate_content_mac};
-use wacore::appstate::keys::expand_app_state_keys;
-use wacore::appstate::processor::validate_patch_macs;
-use waproto::whatsapp as wa;
+use wacore_ng::appstate::WAPATCH_INTEGRITY;
+use wacore_ng::appstate::hash::{HashState, generate_content_mac};
+use wacore_ng::appstate::keys::expand_app_state_keys;
+use wacore_ng::appstate::processor::validate_patch_macs;
+use waproto_ng::whatsapp as wa;
 
 fn make_mutation(
     op: wa::syncd_mutation::SyncdOperation,
@@ -32,7 +32,7 @@ fn make_mutation(
 }
 
 fn create_value_blob(
-    keys: &wacore::appstate::keys::ExpandedAppStateKeys,
+    keys: &wacore_ng::appstate::keys::ExpandedAppStateKeys,
     key_id: &[u8],
 ) -> Vec<u8> {
     let iv = [1u8; 16];

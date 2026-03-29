@@ -1,5 +1,5 @@
 use crate::request::InfoQuery;
-use wacore_binary::node::Node;
+use wacore_binary_ng::node::Node;
 
 /// A reusable IQ specification that pairs a request builder with a response parser.
 ///

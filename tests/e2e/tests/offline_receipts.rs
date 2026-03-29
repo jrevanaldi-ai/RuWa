@@ -5,9 +5,9 @@
 
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
-use wacore::types::presence::ReceiptType;
-use ruwa::waproto::whatsapp as wa;
+use wacore_ng::types::events::Event;
+use wacore_ng::types::presence::ReceiptType;
+use ruwa::waproto_ng::whatsapp as wa;
 
 /// Test that delivery receipts are deferred when recipient is offline.
 ///

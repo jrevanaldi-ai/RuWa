@@ -1,8 +1,8 @@
 use anyhow::Result;
 use ruwa::bot::MessageContext;
 use ruwa::features::{Chatstate, ChatStateType};
-use wacore::proto_helpers::MessageExt;
-use waproto::whatsapp as wa;
+use wacore_ng::proto_helpers::MessageExt;
+use waproto_ng::whatsapp as wa;
 
 /// Command handler for WhatsApp bot
 pub struct CommandHandler;

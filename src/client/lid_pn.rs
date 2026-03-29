@@ -11,7 +11,7 @@
 
 use anyhow::Result;
 use log::debug;
-use wacore_binary::jid::Jid;
+use wacore_binary_ng::jid::Jid;
 
 use super::Client;
 use crate::lid_pn_cache::{LearningSource, LidPnEntry};
@@ -55,7 +55,7 @@ impl Client {
         source: LearningSource,
     ) -> Result<()> {
         use anyhow::anyhow;
-        use wacore::store::traits::LidPnMappingEntry;
+        use wacore_ng::store::traits::LidPnMappingEntry;
 
         // Check if this is a new mapping (not just an update)
         let is_new_mapping = self
@@ -134,8 +134,8 @@ impl Client {
     /// For PN JIDs, this checks if a LID mapping exists and returns the LID.
     /// This ensures that sending and receiving use the same session lock.
     pub(crate) async fn resolve_encryption_jid(&self, target: &Jid) -> Jid {
-        let pn_server = wacore_binary::jid::DEFAULT_USER_SERVER;
-        let lid_server = wacore_binary::jid::HIDDEN_USER_SERVER;
+        let pn_server = wacore_binary_ng::jid::DEFAULT_USER_SERVER;
+        let lid_server = wacore_binary_ng::jid::HIDDEN_USER_SERVER;
 
         if target.server == lid_server {
             // Already a LID - use it directly
@@ -193,7 +193,7 @@ mod tests {
     use crate::lid_pn_cache::LearningSource;
     use crate::test_utils::create_test_client;
     use std::sync::Arc;
-    use wacore_binary::jid::HIDDEN_USER_SERVER;
+    use wacore_binary_ng::jid::HIDDEN_USER_SERVER;
 
     #[tokio::test]
     async fn test_resolve_encryption_jid_pn_to_lid() {

@@ -1,8 +1,8 @@
 use crate::hash::generate_content_mac;
 use crate::keys::ExpandedAppStateKeys;
 use prost::Message;
-use wacore_libsignal::crypto::{CryptographicMac, aes_256_cbc_encrypt_into};
-use waproto::whatsapp as wa;
+use wacore_libsignal_ng::crypto::{CryptographicMac, aes_256_cbc_encrypt_into};
+use waproto_ng::whatsapp as wa;
 
 /// Encode and encrypt a mutation into a SyncdRecord.
 ///

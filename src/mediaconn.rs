@@ -1,14 +1,14 @@
 //! Media connection management.
 //!
-//! Protocol types are defined in `wacore::iq::mediaconn`.
+//! Protocol types are defined in `wacore_ng::iq::mediaconn`.
 
 use crate::client::Client;
 use crate::request::IqError;
 use std::time::{Duration, Instant};
-use wacore::iq::mediaconn::MediaConnSpec;
+use wacore_ng::iq::mediaconn::MediaConnSpec;
 
 /// Re-export the host type from wacore.
-pub use wacore::iq::mediaconn::MediaConnHost;
+pub use wacore_ng::iq::mediaconn::MediaConnHost;
 
 /// Number of retry attempts after a media auth error (401/403).
 /// On auth failure, the media connection is invalidated and refreshed before retrying.

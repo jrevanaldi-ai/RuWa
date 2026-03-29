@@ -5,9 +5,9 @@
 
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 use ruwa::features::{GroupCreateOptions, GroupParticipantOptions};
-use ruwa::waproto::whatsapp as wa;
+use ruwa::waproto_ng::whatsapp as wa;
 
 /// Test that group notifications are queued when a member is offline.
 ///

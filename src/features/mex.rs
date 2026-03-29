@@ -1,15 +1,15 @@
 //! MEX (Meta Exchange) GraphQL feature.
 //!
-//! Protocol types are defined in `wacore::iq::mex`.
+//! Protocol types are defined in `wacore_ng::iq::mex`.
 
 use crate::client::Client;
 use crate::request::IqError;
 use serde_json::Value;
 use thiserror::Error;
-use wacore::iq::mex::MexQuerySpec;
+use wacore_ng::iq::mex::MexQuerySpec;
 
 // Re-export types from wacore
-pub use wacore::iq::mex::{MexErrorExtensions, MexGraphQLError, MexResponse};
+pub use wacore_ng::iq::mex::{MexErrorExtensions, MexGraphQLError, MexResponse};
 
 /// Error types for MEX operations.
 #[derive(Debug, Error)]

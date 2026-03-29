@@ -6,9 +6,9 @@ use crate::request::InfoQuery;
 use anyhow::{Result, anyhow};
 use std::num::NonZeroU32;
 use typed_builder::TypedBuilder;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::{GROUP_SERVER, Jid};
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::{GROUP_SERVER, Jid};
+use wacore_binary_ng::node::{Node, NodeContent};
 
 // Re-export AddressingMode from types::message for convenience
 pub use crate::types::message::AddressingMode;

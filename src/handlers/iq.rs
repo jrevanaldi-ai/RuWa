@@ -3,8 +3,8 @@ use crate::client::Client;
 use async_trait::async_trait;
 use log::{debug, warn};
 use std::sync::Arc;
-use wacore::xml::DisplayableNode;
-use wacore_binary::node::Node;
+use wacore_ng::xml::DisplayableNode;
+use wacore_binary_ng::node::Node;
 
 /// Handler for `<iq>` (Info/Query) stanzas.
 ///

@@ -1,9 +1,9 @@
 use chrono::Local;
 use log::{error, info};
 use std::sync::Arc;
-use wacore::proto_helpers::MessageExt;
-use wacore::types::events::Event;
-use waproto::whatsapp as wa;
+use wacore_ng::proto_helpers::MessageExt;
+use wacore_ng::types::events::Event;
+use waproto_ng::whatsapp as wa;
 use ruwa::bot::{Bot, MessageContext};
 use ruwa::store::SqliteStore;
 use ruwa_tokio_transport::TokioWebSocketTransportFactory;

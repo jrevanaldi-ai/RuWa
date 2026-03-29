@@ -1,1 +1,1 @@
-pub use wacore::net::{HttpClient, HttpRequest, HttpResponse};
+pub use wacore_ng::net::{HttpClient, HttpRequest, HttpResponse};

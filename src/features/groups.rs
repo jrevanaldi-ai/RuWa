@@ -1,17 +1,17 @@
 use crate::client::Client;
 use std::collections::HashMap;
-use wacore::client::context::GroupInfo;
-use wacore::iq::groups::{
+use wacore_ng::client::context::GroupInfo;
+use wacore_ng::iq::groups::{
     AddParticipantsIq, DemoteParticipantsIq, GetGroupInviteLinkIq, GroupCreateIq,
     GroupInfoResponse, GroupParticipantResponse, GroupParticipatingIq, GroupQueryIq, LeaveGroupIq,
     PromoteParticipantsIq, RemoveParticipantsIq, SetGroupAnnouncementIq, SetGroupDescriptionIq,
     SetGroupEphemeralIq, SetGroupLockedIq, SetGroupMembershipApprovalIq, SetGroupSubjectIq,
     normalize_participants,
 };
-use wacore::types::message::AddressingMode;
-use wacore_binary::jid::Jid;
+use wacore_ng::types::message::AddressingMode;
+use wacore_binary_ng::jid::Jid;
 
-pub use wacore::iq::groups::{
+pub use wacore_ng::iq::groups::{
     GroupCreateOptions, GroupDescription, GroupParticipantOptions, GroupSubject, MemberAddMode,
     MemberLinkMode, MembershipApprovalMode, ParticipantChangeResponse,
 };

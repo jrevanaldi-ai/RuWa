@@ -4,12 +4,12 @@ use iai_callgrind::{
 };
 use prost::Message;
 use std::hint::black_box;
-use wacore::reporting_token::{
+use wacore_ng::reporting_token::{
     MESSAGE_SECRET_SIZE, REPORTING_TOKEN_KEY_SIZE, calculate_reporting_token,
     derive_reporting_token_key, generate_reporting_token, generate_reporting_token_content,
 };
-use wacore_binary::jid::Jid;
-use waproto::whatsapp as wa;
+use wacore_binary_ng::jid::Jid;
+use waproto_ng::whatsapp as wa;
 
 fn create_simple_message() -> wa::Message {
     wa::Message {

@@ -1,5 +1,5 @@
-use wacore::appstate::patch_decode::WAPatchName;
-use waproto::whatsapp::message::HistorySyncNotification;
+use wacore_ng::appstate::patch_decode::WAPatchName;
+use waproto_ng::whatsapp::message::HistorySyncNotification;
 
 #[derive(Debug)]
 pub enum MajorSyncTask {

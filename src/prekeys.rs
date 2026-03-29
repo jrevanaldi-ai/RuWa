@@ -9,15 +9,15 @@ use anyhow;
 use log;
 use rand::TryRngCore;
 use std::sync::atomic::Ordering;
-use wacore::iq::prekeys::{
+use wacore_ng::iq::prekeys::{
     DigestKeyBundleSpec, PreKeyCountSpec, PreKeyFetchSpec, PreKeyUploadSpec,
 };
-use wacore::libsignal::protocol::{KeyPair, PreKeyBundle, PublicKey};
-use wacore::libsignal::store::record_helpers::new_pre_key_record;
-use wacore::store::commands::DeviceCommand;
-use wacore_binary::jid::Jid;
+use wacore_ng::libsignal::protocol::{KeyPair, PreKeyBundle, PublicKey};
+use wacore_ng::libsignal::store::record_helpers::new_pre_key_record;
+use wacore_ng::store::commands::DeviceCommand;
+use wacore_binary_ng::jid::Jid;
 
-pub use wacore::prekeys::PreKeyUtils;
+pub use wacore_ng::prekeys::PreKeyUtils;
 
 /// Matches WA Web's UPLOAD_KEYS_COUNT from WAWebSignalStoreApi.
 const WANTED_PRE_KEY_COUNT: usize = 812;
@@ -270,7 +270,7 @@ impl Client {
             match backend.load_prekey(*prekey_id).await {
                 Ok(Some(record_bytes)) => {
                     use prost::Message;
-                    match waproto::whatsapp::PreKeyRecordStructure::decode(record_bytes.as_slice())
+                    match waproto_ng::whatsapp::PreKeyRecordStructure::decode(record_bytes.as_slice())
                     {
                         Ok(record) => {
                             if let Some(pk) = record.public_key {
@@ -312,7 +312,7 @@ impl Client {
         }
 
         // Compute local SHA-1 digest matching WA Web's validateLocalKeyBundle
-        let local_hash = wacore::prekeys::compute_key_bundle_digest(
+        let local_hash = wacore_ng::prekeys::compute_key_bundle_digest(
             identity_bytes,
             skey_pub_bytes,
             skey_sig_bytes,

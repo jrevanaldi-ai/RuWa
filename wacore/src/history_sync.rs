@@ -4,7 +4,7 @@ use prost::Message;
 use protobuf::CodedInputStream;
 use std::io::BufReader;
 use thiserror::Error;
-use waproto::whatsapp as wa;
+use waproto_ng::whatsapp as wa;
 
 const STREAMING_BUFFER_SIZE: usize = 64 * 1024;
 

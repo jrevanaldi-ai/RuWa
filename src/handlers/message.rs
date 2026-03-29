@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use log::warn;
 use std::sync::Arc;
 use tokio::sync::mpsc;
-use wacore_binary::node::Node;
+use wacore_binary_ng::node::Node;
 
 /// Handler for `<message>` stanzas.
 ///

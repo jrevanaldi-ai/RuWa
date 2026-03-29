@@ -1,6 +1,6 @@
 use std::str::FromStr;
-use wacore_binary::jid::{Jid, JidExt};
-use waproto::whatsapp as wa;
+use wacore_binary_ng::jid::{Jid, JidExt};
+use waproto_ng::whatsapp as wa;
 
 /// Invokes a callback macro with the list of all message types that have `context_info`.
 ///
@@ -108,7 +108,7 @@ pub trait MessageExt {
     /// # Example
     ///
     /// ```ignore
-    /// use wacore::proto_helpers::MessageExt;
+    /// use wacore_ng::proto_helpers::MessageExt;
     ///
     /// let context_info = wa::ContextInfo {
     ///     stanza_id: Some(message_id.clone()),
@@ -126,7 +126,7 @@ pub trait MessageExt {
     /// # Example
     ///
     /// ```ignore
-    /// use wacore::proto_helpers::MessageExt;
+    /// use wacore_ng::proto_helpers::MessageExt;
     ///
     /// let mut reply = wa::Message {
     ///     image_message: Some(Box::new(wa::message::ImageMessage {
@@ -388,7 +388,7 @@ pub fn merge_dsm_context(
 /// # Example
 ///
 /// ```ignore
-/// use wacore::proto_helpers::{build_quote_context, MessageExt};
+/// use wacore_ng::proto_helpers::{build_quote_context, MessageExt};
 ///
 /// let context = build_quote_context(
 ///     "3EB0123456789",
@@ -435,7 +435,7 @@ pub fn build_quote_context(
 /// # Example
 ///
 /// ```ignore
-/// use wacore::proto_helpers::{build_quote_context_with_info, MessageExt};
+/// use wacore_ng::proto_helpers::{build_quote_context_with_info, MessageExt};
 ///
 /// let context = build_quote_context_with_info(
 ///     "3EB0123456789",

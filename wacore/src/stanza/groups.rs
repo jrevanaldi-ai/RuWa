@@ -11,8 +11,8 @@
 //! - Participant lists are nested `<participant jid="..." />` children
 
 use serde::Serialize;
-use wacore_binary::jid::Jid;
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::jid::Jid;
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// Parsed group notification containing one or more actions.
 #[derive(Debug, Clone)]
@@ -396,8 +396,8 @@ fn parse_participants(node: &Node) -> Vec<GroupParticipantInfo> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wacore_binary::builder::NodeBuilder;
-    use wacore_binary::jid::Jid;
+    use wacore_binary_ng::builder::NodeBuilder;
+    use wacore_binary_ng::jid::Jid;
 
     fn group_jid() -> Jid {
         "120363012345678901@g.us".parse().unwrap()

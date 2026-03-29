@@ -1,5 +1,5 @@
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::marshal::{marshal, unmarshal_ref};
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::marshal::{marshal, unmarshal_ref};
 
 #[test]
 fn test_simple_node_roundtrip_with_ref() {
@@ -114,7 +114,7 @@ fn test_unmarshal_ref_leftover_data_error() {
 
     if let Err(e) = result {
         match e {
-            wacore_binary::BinaryError::LeftoverData(n) => assert_eq!(n, 3),
+            wacore_binary_ng::BinaryError::LeftoverData(n) => assert_eq!(n, 3),
             _ => panic!("Expected LeftoverData error, got {e:?}"),
         }
     }

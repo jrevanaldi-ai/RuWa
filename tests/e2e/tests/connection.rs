@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use e2e_tests::{ChannelEventHandler, TestClient, create_test_store, mock_server_url};
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 use ruwa::bot::Bot;
 use ruwa::store::traits::Backend;
 use ruwa_tokio_transport::TokioWebSocketTransportFactory;

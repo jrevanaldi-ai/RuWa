@@ -5,8 +5,8 @@ use crate::client::Client;
 use async_trait::async_trait;
 use log::debug;
 use std::sync::Arc;
-use wacore::types::events::{Event, PresenceUpdate};
-use wacore_binary::node::Node;
+use wacore_ng::types::events::{Event, PresenceUpdate};
+use wacore_binary_ng::node::Node;
 
 /// Handler for `<presence>` stanzas.
 ///

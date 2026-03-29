@@ -11,10 +11,10 @@ use anyhow::{Result, anyhow};
 use dashmap::DashMap;
 use moka::future::Cache;
 use tokio::sync::watch;
-use wacore::xml::DisplayableNode;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::JidExt;
-use wacore_binary::node::{Attrs, Node};
+use wacore_ng::xml::DisplayableNode;
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::JidExt;
+use wacore_binary_ng::node::{Attrs, Node};
 
 use crate::appstate_sync::AppStateProcessor;
 use crate::handlers::chatstate::ChatStateEvent;
@@ -28,7 +28,7 @@ use log::{debug, error, info, trace, warn};
 use rand::{Rng, RngCore};
 use scopeguard;
 use std::collections::{HashMap, HashSet};
-use wacore_binary::jid::Jid;
+use wacore_binary_ng::jid::Jid;
 
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, AtomicUsize, Ordering};
@@ -92,9 +92,9 @@ struct NodeWaiter {
 use thiserror::Error;
 use tokio::sync::{Mutex, Notify, OnceCell, RwLock, mpsc};
 use tokio::time::{Duration, sleep};
-use wacore::appstate::patch_decode::WAPatchName;
-use wacore::client::context::GroupInfo;
-use waproto::whatsapp as wa;
+use wacore_ng::appstate::patch_decode::WAPatchName;
+use wacore_ng::client::context::GroupInfo;
+use waproto_ng::whatsapp as wa;
 
 use crate::cache_config::CacheConfig;
 use crate::socket::{NoiseSocket, SocketError, error::EncryptSendError};
@@ -122,7 +122,7 @@ pub enum ClientError {
     NotLoggedIn,
 }
 
-use wacore::types::message::StanzaKey;
+use wacore_ng::types::message::StanzaKey;
 
 /// Metrics for tracking offline sync progress
 #[derive(Debug)]
@@ -136,7 +136,7 @@ pub(crate) struct OfflineSyncMetrics {
 }
 
 pub struct Client {
-    pub(crate) core: wacore::client::CoreClient,
+    pub(crate) core: wacore_ng::client::CoreClient,
 
     pub(crate) persistence_manager: Arc<PersistenceManager>,
     pub(crate) media_conn: Arc<RwLock<Option<crate::mediaconn::MediaConn>>>,
@@ -161,7 +161,7 @@ pub struct Client {
     pub(crate) noise_socket: Arc<Mutex<Option<Arc<NoiseSocket>>>>,
 
     pub(crate) response_waiters:
-        Arc<Mutex<HashMap<String, tokio::sync::oneshot::Sender<wacore_binary::Node>>>>,
+        Arc<Mutex<HashMap<String, tokio::sync::oneshot::Sender<wacore_binary_ng::Node>>>>,
 
     /// Generic node waiters for waiting on specific stanzas by tag/attributes.
     /// Uses std::sync::Mutex (not tokio) since the critical section is trivial.
@@ -277,7 +277,7 @@ pub struct Client {
 
     /// State machine for pair code authentication flow.
     /// Tracks the pending pair code request and ephemeral keys.
-    pub(crate) pair_code_state: Arc<Mutex<wacore::pair_code::PairCodeState>>,
+    pub(crate) pair_code_state: Arc<Mutex<wacore_ng::pair_code::PairCodeState>>,
 
     /// Pool for reusing plaintext marshal buffers.
     /// Note: encrypted buffers are not pooled since they're moved to transport (zero-copy).
@@ -297,7 +297,7 @@ pub struct Client {
     /// LRU cache for device registry (matches WhatsApp Web's 5000 entry limit).
     /// Maps user ID to DeviceListRecord for fast device existence checks.
     /// Backed by persistent storage.
-    pub(crate) device_registry_cache: Cache<String, wacore::store::traits::DeviceListRecord>,
+    pub(crate) device_registry_cache: Cache<String, wacore_ng::store::traits::DeviceListRecord>,
 
     /// Router for dispatching stanzas to their appropriate handlers
     pub(crate) stanza_router: crate::handlers::router::StanzaRouter,
@@ -409,7 +409,7 @@ impl Client {
         rand::rng().fill_bytes(&mut unique_id_bytes);
 
         let device_snapshot = persistence_manager.get_device_snapshot().await;
-        let core = wacore::client::CoreClient::new(device_snapshot.core.clone());
+        let core = wacore_ng::client::CoreClient::new(device_snapshot.core.clone());
 
         let (tx, rx) = mpsc::channel(32);
 
@@ -491,7 +491,7 @@ impl Client {
             connected_notifier: Arc::new(Notify::new()),
             major_sync_task_sender: tx,
             pairing_cancellation_tx: Arc::new(Mutex::new(None)),
-            pair_code_state: Arc::new(Mutex::new(wacore::pair_code::PairCodeState::default())),
+            pair_code_state: Arc::new(Mutex::new(wacore_ng::pair_code::PairCodeState::default())),
             plaintext_buffer_pool: Arc::new(Mutex::new(Vec::with_capacity(
                 MAX_POOLED_BUFFER_COUNT,
             ))),
@@ -589,7 +589,7 @@ impl Client {
     }
 
     /// Registers an external event handler to the core event bus.
-    pub fn register_handler(&self, handler: Arc<dyn wacore::types::events::EventHandler>) {
+    pub fn register_handler(&self, handler: Arc<dyn wacore_ng::types::events::EventHandler>) {
         self.core.event_bus.add_handler(handler);
     }
 
@@ -608,12 +608,12 @@ impl Client {
     /// Called by `ChatstateHandler` after parsing the incoming stanza.
     pub(crate) async fn dispatch_chatstate_event(
         &self,
-        stanza: wacore::iq::chatstate::ChatstateStanza,
+        stanza: wacore_ng::iq::chatstate::ChatstateStanza,
     ) {
-        use wacore::iq::chatstate::{ChatstateSource, ReceivedChatState};
-        use wacore::types::events::ChatPresenceUpdate;
-        use wacore::types::message::MessageSource;
-        use wacore::types::presence::{ChatPresence, ChatPresenceMedia};
+        use wacore_ng::iq::chatstate::{ChatstateSource, ReceivedChatState};
+        use wacore_ng::types::events::ChatPresenceUpdate;
+        use wacore_ng::types::message::MessageSource;
+        use wacore_ng::types::presence::{ChatPresence, ChatPresenceMedia};
 
         // Dispatch via event bus
         let (chat, sender, is_group) = match &stanza.source {
@@ -915,7 +915,7 @@ impl Client {
         drop(rx_guard);
 
         // Frame decoder to parse incoming data
-        let mut frame_decoder = wacore::framing::FrameDecoder::new();
+        let mut frame_decoder = wacore_ng::framing::FrameDecoder::new();
 
         loop {
             tokio::select! {
@@ -997,7 +997,7 @@ impl Client {
     pub(crate) async fn decrypt_frame(
         self: &Arc<Self>,
         encrypted_frame: &bytes::Bytes,
-    ) -> Option<wacore_binary::node::Node> {
+    ) -> Option<wacore_binary_ng::node::Node> {
         let noise_socket_arc = { self.noise_socket.lock().await.clone() };
         let noise_socket = match noise_socket_arc {
             Some(s) => s,
@@ -1015,7 +1015,7 @@ impl Client {
             }
         };
 
-        let unpacked_data_cow = match wacore_binary::util::unpack(&decrypted_payload) {
+        let unpacked_data_cow = match wacore_binary_ng::util::unpack(&decrypted_payload) {
             Ok(data) => data,
             Err(e) => {
                 log::warn!(target: "Client/Recv", "Failed to decompress frame: {e}");
@@ -1023,7 +1023,7 @@ impl Client {
             }
         };
 
-        match wacore_binary::marshal::unmarshal_ref(unpacked_data_cow.as_ref()) {
+        match wacore_binary_ng::marshal::unmarshal_ref(unpacked_data_cow.as_ref()) {
             Ok(node_ref) => Some(node_ref.to_owned()),
             Err(e) => {
                 log::warn!(target: "Client/Recv", "Failed to unmarshal node: {e}");
@@ -1035,7 +1035,7 @@ impl Client {
     /// Process an already-decrypted node.
     /// This can be spawned concurrently since it doesn't depend on noise protocol state.
     /// The node is wrapped in Arc to avoid cloning when passing through handlers.
-    pub(crate) async fn process_decrypted_node(self: &Arc<Self>, node: wacore_binary::node::Node) {
+    pub(crate) async fn process_decrypted_node(self: &Arc<Self>, node: wacore_binary_ng::node::Node) {
         // Wrap in Arc once - all handlers will share this same allocation
         let node_arc = Arc::new(node);
         self.process_node(node_arc).await;
@@ -1043,7 +1043,7 @@ impl Client {
 
     /// Process a node wrapped in Arc. Handlers receive the Arc and can share/store it cheaply.
     pub(crate) async fn process_node(self: &Arc<Self>, node: Arc<Node>) {
-        use wacore::xml::DisplayableNode;
+        use wacore_ng::xml::DisplayableNode;
 
         // --- Offline Sync Tracking ---
         if node.tag.as_str() == "ib" {
@@ -1301,7 +1301,7 @@ impl Client {
     }
 
     pub async fn set_passive(&self, passive: bool) -> Result<(), crate::request::IqError> {
-        use wacore::iq::passive::PassiveModeSpec;
+        use wacore_ng::iq::passive::PassiveModeSpec;
         self.execute(PassiveModeSpec::new(passive)).await
     }
 
@@ -1310,15 +1310,15 @@ impl Client {
         type_: &str,
         timestamp: Option<&str>,
     ) -> Result<(), crate::request::IqError> {
-        use wacore::iq::dirty::CleanDirtyBitsSpec;
+        use wacore_ng::iq::dirty::CleanDirtyBitsSpec;
 
         let spec = CleanDirtyBitsSpec::single(type_, timestamp)?;
         self.execute(spec).await
     }
 
     pub async fn fetch_props(&self) -> Result<(), crate::request::IqError> {
-        use wacore::iq::props::PropsSpec;
-        use wacore::store::commands::DeviceCommand;
+        use wacore_ng::iq::props::PropsSpec;
+        use wacore_ng::store::commands::DeviceCommand;
 
         let stored_hash = self
             .persistence_manager
@@ -1364,8 +1364,8 @@ impl Client {
 
     pub async fn fetch_privacy_settings(
         &self,
-    ) -> Result<wacore::iq::privacy::PrivacySettingsResponse, crate::request::IqError> {
-        use wacore::iq::privacy::PrivacySettingsSpec;
+    ) -> Result<wacore_ng::iq::privacy::PrivacySettingsResponse, crate::request::IqError> {
+        use wacore_ng::iq::privacy::PrivacySettingsSpec;
 
         debug!("Fetching privacy settings...");
 
@@ -1373,14 +1373,14 @@ impl Client {
     }
 
     pub async fn send_digest_key_bundle(&self) -> Result<(), crate::request::IqError> {
-        use wacore::iq::prekeys::DigestKeyBundleSpec;
+        use wacore_ng::iq::prekeys::DigestKeyBundleSpec;
 
         debug!("Sending digest key bundle...");
 
         self.execute(DigestKeyBundleSpec::new()).await.map(|_| ())
     }
 
-    pub(crate) async fn handle_success(self: &Arc<Self>, node: &wacore_binary::node::Node) {
+    pub(crate) async fn handle_success(self: &Arc<Self>, node: &wacore_binary_ng::node::Node) {
         // Skip processing if an expected disconnect is pending (e.g., 515 received).
         // This prevents race conditions where a spawned success handler runs after
         // cleanup_connection_state has already reset is_logged_in.
@@ -1777,10 +1777,10 @@ impl Client {
                         }
                         continue;
                     }
-                    let is_db_locked = e.downcast_ref::<wacore::store::error::StoreError>()
-                        .is_some_and(|se| matches!(se, wacore::store::error::StoreError::Database(msg) if msg.contains("locked") || msg.contains("busy")))
+                    let is_db_locked = e.downcast_ref::<wacore_ng::store::error::StoreError>()
+                        .is_some_and(|se| matches!(se, wacore_ng::store::error::StoreError::Database(msg) if msg.contains("locked") || msg.contains("busy")))
                         || e.downcast_ref::<crate::appstate_sync::AppStateSyncError>()
-                            .is_some_and(|ase| matches!(ase, crate::appstate_sync::AppStateSyncError::Store(wacore::store::error::StoreError::Database(msg)) if msg.contains("locked") || msg.contains("busy")));
+                            .is_some_and(|ase| matches!(ase, crate::appstate_sync::AppStateSyncError::Store(wacore_ng::store::error::StoreError::Database(msg)) if msg.contains("locked") || msg.contains("busy")));
                     if is_db_locked && attempt < APP_STATE_RETRY_MAX_ATTEMPTS {
                         let backoff = Duration::from_millis(200 * attempt as u64 + 150);
                         warn!(target: "Client/AppState", "Attempt {} for {:?} failed due to locked DB; backing off {:?} and retrying", attempt, name, backoff);
@@ -1842,7 +1842,7 @@ impl Client {
         &self,
         mut pending: Vec<WAPatchName>,
     ) -> anyhow::Result<()> {
-        use wacore::appstate::patch_decode::CollectionSyncError;
+        use wacore_ng::appstate::patch_decode::CollectionSyncError;
         const MAX_ITERATIONS: usize = 5;
         let mut iteration = 0;
 
@@ -1884,7 +1884,7 @@ impl Client {
                 to: server_jid(),
                 target: None,
                 id: None,
-                content: Some(wacore_binary::node::NodeContent::Nodes(vec![sync_node])),
+                content: Some(wacore_binary_ng::node::NodeContent::Nodes(vec![sync_node])),
                 timeout: Some(Duration::from_secs(30)),
             };
 
@@ -1894,7 +1894,7 @@ impl Client {
             let mut pre_downloaded: std::collections::HashMap<String, Vec<u8>> =
                 std::collections::HashMap::new();
 
-            if let Ok(patch_lists) = wacore::appstate::patch_decode::parse_patch_lists(&resp) {
+            if let Ok(patch_lists) = wacore_ng::appstate::patch_decode::parse_patch_lists(&resp) {
                 for pl in &patch_lists {
                     // Download external snapshot
                     if let Some(ext) = &pl.snapshot_ref
@@ -2113,7 +2113,7 @@ impl Client {
                 to: server_jid(),
                 target: None,
                 id: None,
-                content: Some(wacore_binary::node::NodeContent::Nodes(vec![sync_node])),
+                content: Some(wacore_binary_ng::node::NodeContent::Nodes(vec![sync_node])),
                 timeout: None,
             };
 
@@ -2131,7 +2131,7 @@ impl Client {
             let mut pre_downloaded: std::collections::HashMap<String, Vec<u8>> =
                 std::collections::HashMap::new();
 
-            if let Ok(pl) = wacore::appstate::patch_decode::parse_patch_list(&resp) {
+            if let Ok(pl) = wacore_ng::appstate::patch_decode::parse_patch_list(&resp) {
                 debug!(target: "Client/AppState", "Parsed patch list for {:?}: has_snapshot_ref={} has_more_patches={} patches_count={}",
                     name, pl.snapshot_ref.is_some(), pl.has_more_patches, pl.patches.len());
 
@@ -2307,7 +2307,7 @@ impl Client {
             to: server_jid(),
             target: None,
             id: None,
-            content: Some(wacore_binary::node::NodeContent::Nodes(vec![sync_node])),
+            content: Some(wacore_binary_ng::node::NodeContent::Nodes(vec![sync_node])),
             timeout: None,
         };
 
@@ -2329,7 +2329,7 @@ impl Client {
         m: &crate::appstate_sync::Mutation,
         full_sync: bool,
     ) {
-        use wacore::types::events::Event;
+        use wacore_ng::types::events::Event;
 
         if m.operation != wa::syncd_mutation::SyncdOperation::Set {
             return;
@@ -2385,7 +2385,7 @@ impl Client {
         self.expected_disconnect.store(true, Ordering::Relaxed);
     }
 
-    pub(crate) async fn handle_stream_error(&self, node: &wacore_binary::node::Node) {
+    pub(crate) async fn handle_stream_error(&self, node: &wacore_binary_ng::node::Node) {
         self.is_logged_in.store(false, Ordering::Relaxed);
 
         let mut attrs = node.attrs();
@@ -2525,7 +2525,7 @@ impl Client {
         self.shutdown_notifier.notify_waiters();
     }
 
-    pub(crate) async fn handle_connect_failure(&self, node: &wacore_binary::node::Node) {
+    pub(crate) async fn handle_connect_failure(&self, node: &wacore_binary_ng::node::Node) {
         self.expected_disconnect.store(true, Ordering::Relaxed);
         self.shutdown_notifier.notify_waiters();
 
@@ -2543,7 +2543,7 @@ impl Client {
             info!("Got {reason:?} connect failure, logging out.");
             self.core
                 .event_bus
-                .dispatch(&wacore::types::events::Event::LoggedOut(
+                .dispatch(&wacore_ng::types::events::Event::LoggedOut(
                     crate::types::events::LoggedOut {
                         on_connect: true,
                         reason,
@@ -2578,7 +2578,7 @@ impl Client {
         }
     }
 
-    pub(crate) async fn handle_iq(self: &Arc<Self>, node: &wacore_binary::node::Node) -> bool {
+    pub(crate) async fn handle_iq(self: &Arc<Self>, node: &wacore_binary_ng::node::Node) -> bool {
         if let Some("get") = node.attrs.get("type").and_then(|s| s.as_str())
             && (node.get_optional_child("ping").is_some()
                 || node.attrs.get("xmlns").and_then(|s| s.as_str()) == Some("urn:xmpp:ping"))
@@ -2664,7 +2664,7 @@ impl Client {
         }
     }
 
-    pub(crate) fn update_server_time_offset(&self, node: &wacore_binary::node::Node) {
+    pub(crate) fn update_server_time_offset(&self, node: &wacore_binary_ng::node::Node) {
         self.unified_session.update_server_time_offset(node);
     }
 
@@ -2822,7 +2822,7 @@ impl Client {
         };
         plaintext_buf.clear();
 
-        if let Err(e) = wacore_binary::marshal::marshal_to(&node, &mut plaintext_buf) {
+        if let Err(e) = wacore_binary_ng::marshal::marshal_to(&node, &mut plaintext_buf) {
             error!("Failed to marshal node: {e:?}");
             let mut pool = self.plaintext_buffer_pool.lock().await;
             if plaintext_buf.capacity() <= MAX_POOLED_BUFFER_CAP
@@ -2999,7 +2999,7 @@ impl Client {
 ///
 /// Matches WhatsApp Web (`WAWebCommsHandleStanza`): only includes `id`
 /// when the server ping carried one.
-fn build_pong(to: String, id: Option<&str>) -> wacore_binary::node::Node {
+fn build_pong(to: String, id: Option<&str>) -> wacore_binary_ng::node::Node {
     let mut builder = NodeBuilder::new("iq").attr("to", to).attr("type", "result");
     if let Some(id) = id {
         builder = builder.attr("id", id);
@@ -3041,7 +3041,7 @@ mod tests {
     use crate::lid_pn_cache::LearningSource;
     use crate::test_utils::MockHttpClient;
     use tokio::sync::oneshot;
-    use wacore_binary::jid::SERVER_JID;
+    use wacore_binary_ng::jid::SERVER_JID;
 
     #[tokio::test]
     async fn test_ack_behavior_for_incoming_stanzas() {
@@ -3062,7 +3062,7 @@ mod tests {
         // --- Assertions ---
 
         // Verify that we still ack other critical stanzas (regression check).
-        use wacore_binary::node::{Attrs, Node, NodeContent};
+        use wacore_binary_ng::node::{Attrs, Node, NodeContent};
 
         let mut receipt_attrs = Attrs::new();
         receipt_attrs.insert("from".to_string(), "@s.whatsapp.net".to_string());
@@ -3402,10 +3402,10 @@ mod tests {
 
     /// Test that get_lid_for_phone (from SendContextResolver) returns the cached value.
     ///
-    /// This is the method used by wacore::send to look up LID mappings when encrypting.
+    /// This is the method used by wacore_ng::send to look up LID mappings when encrypting.
     #[tokio::test]
     async fn test_get_lid_for_phone_via_send_context_resolver() {
-        use wacore::client::context::SendContextResolver;
+        use wacore_ng::client::context::SendContextResolver;
 
         let backend = Arc::new(
             crate::store::SqliteStore::new("file:memdb_get_lid_for_phone?mode=memory&cache=shared")
@@ -3747,7 +3747,7 @@ mod tests {
     #[tokio::test]
     async fn test_ensure_e2e_sessions_waits_for_offline_sync() {
         use std::sync::atomic::Ordering;
-        use wacore_binary::jid::Jid;
+        use wacore_binary_ng::jid::Jid;
 
         let backend = Arc::new(
             crate::store::SqliteStore::new("file:memdb_ensure_e2e_waits?mode=memory&cache=shared")
@@ -3831,7 +3831,7 @@ mod tests {
     #[tokio::test]
     async fn test_immediate_session_does_not_wait_for_offline_sync() {
         use std::sync::atomic::Ordering;
-        use wacore_binary::jid::Jid;
+        use wacore_binary_ng::jid::Jid;
 
         let backend = Arc::new(
             crate::store::SqliteStore::new("file:memdb_immediate_no_wait?mode=memory&cache=shared")
@@ -3908,10 +3908,10 @@ mod tests {
     /// - RESULT: Remote device still uses old session state, causing MAC failures
     #[tokio::test]
     async fn test_establish_session_skips_when_exists() {
-        use wacore::libsignal::protocol::SessionRecord;
-        use wacore::libsignal::store::SessionStore;
-        use wacore::types::jid::JidExt;
-        use wacore_binary::jid::Jid;
+        use wacore_ng::libsignal::protocol::SessionRecord;
+        use wacore_ng::libsignal::store::SessionStore;
+        use wacore_ng::types::jid::JidExt;
+        use wacore_binary_ng::jid::Jid;
 
         let backend = Arc::new(
             crate::store::SqliteStore::new("file:memdb_skip_existing?mode=memory&cache=shared")
@@ -4068,7 +4068,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_server_time_offset_extraction() {
-        use wacore_binary::builder::NodeBuilder;
+        use wacore_binary_ng::builder::NodeBuilder;
 
         let backend = crate::test_utils::create_test_backend().await;
         let pm = Arc::new(
@@ -4203,8 +4203,8 @@ mod tests {
     #[test]
     fn test_unified_session_protocol_node() {
         // Test the type-safe protocol node implementation
-        use wacore::ib::{IbStanza, UnifiedSession};
-        use wacore::protocol::ProtocolNode;
+        use wacore_ng::ib::{IbStanza, UnifiedSession};
+        use wacore_ng::protocol::ProtocolNode;
 
         // Create a unified session
         let session = UnifiedSession::new("123456789");

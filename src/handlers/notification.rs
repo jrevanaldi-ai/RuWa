@@ -5,17 +5,17 @@ use crate::types::events::Event;
 use async_trait::async_trait;
 use log::{debug, info, warn};
 use std::sync::Arc;
-use wacore::stanza::business::BusinessNotification;
-use wacore::stanza::devices::DeviceNotification;
-use wacore::stanza::groups::{GroupNotification, GroupNotificationAction};
-use wacore::store::traits::{DeviceInfo, DeviceListRecord};
-use wacore::types::events::{
+use wacore_ng::stanza::business::BusinessNotification;
+use wacore_ng::stanza::devices::DeviceNotification;
+use wacore_ng::stanza::groups::{GroupNotification, GroupNotificationAction};
+use wacore_ng::store::traits::{DeviceInfo, DeviceListRecord};
+use wacore_ng::types::events::{
     BusinessStatusUpdate, BusinessUpdateType, ContactNumberChanged, ContactSyncRequested,
     ContactUpdated, DeviceListUpdate, DeviceNotificationInfo, GroupUpdate, PictureUpdate,
     UserAboutUpdate,
 };
-use wacore_binary::jid::{Jid, JidExt};
-use wacore_binary::{jid::SERVER_JID, node::Node};
+use wacore_binary_ng::jid::{Jid, JidExt};
+use wacore_binary_ng::{jid::SERVER_JID, node::Node};
 
 /// Handler for `<notification>` stanzas.
 ///
@@ -69,7 +69,7 @@ async fn handle_notification_impl(client: &Arc<Client>, node: &Node) {
             // Matches WhatsApp Web's handleServerSyncNotification which calls
             // markCollectionsForSync() with the parsed collection names.
             use std::str::FromStr;
-            use wacore::appstate::patch_decode::WAPatchName;
+            use wacore_ng::appstate::patch_decode::WAPatchName;
 
             let mut collections = Vec::new();
             if let Some(children) = node.children() {
@@ -493,8 +493,8 @@ async fn handle_account_sync_devices(client: &Arc<Client>, node: &Node, devices_
 /// </notification>
 /// ```
 async fn handle_privacy_token_notification(client: &Arc<Client>, node: &Node) {
-    use wacore::iq::tctoken::parse_privacy_token_notification;
-    use wacore::store::traits::TcTokenEntry;
+    use wacore_ng::iq::tctoken::parse_privacy_token_notification;
+    use wacore_ng::store::traits::TcTokenEntry;
 
     // Resolve the sender to a LID JID for storage.
     // WA Web uses `sender_lid` attr if present, otherwise resolves from `from`.
@@ -634,16 +634,16 @@ async fn handle_business_notification(client: &Arc<Client>, node: &Node) {
     });
 
     match notification.notification_type {
-        wacore::stanza::business::BusinessNotificationType::RemoveJid
-        | wacore::stanza::business::BusinessNotificationType::RemoveHash => {
+        wacore_ng::stanza::business::BusinessNotificationType::RemoveJid
+        | wacore_ng::stanza::business::BusinessNotificationType::RemoveHash => {
             info!(
                 target: "Client/Business",
                 "Contact {} is no longer a business account",
                 notification.from
             );
         }
-        wacore::stanza::business::BusinessNotificationType::VerifiedNameJid
-        | wacore::stanza::business::BusinessNotificationType::VerifiedNameHash => {
+        wacore_ng::stanza::business::BusinessNotificationType::VerifiedNameJid
+        | wacore_ng::stanza::business::BusinessNotificationType::VerifiedNameHash => {
             if let Some(name) = &notification
                 .verified_name
                 .as_ref()
@@ -657,8 +657,8 @@ async fn handle_business_notification(client: &Arc<Client>, node: &Node) {
                 );
             }
         }
-        wacore::stanza::business::BusinessNotificationType::Profile
-        | wacore::stanza::business::BusinessNotificationType::ProfileHash => {
+        wacore_ng::stanza::business::BusinessNotificationType::Profile
+        | wacore_ng::stanza::business::BusinessNotificationType::ProfileHash => {
             debug!(
                 target: "Client/Business",
                 "Contact {} business profile updated (hash: {:?})",
@@ -800,8 +800,8 @@ fn handle_status_notification(client: &Arc<Client>, node: &Node) {
 
     if let Some(set_node) = node.get_optional_child("set") {
         let status_text = match &set_node.content {
-            Some(wacore_binary::node::NodeContent::String(s)) => s.clone(),
-            Some(wacore_binary::node::NodeContent::Bytes(b)) => {
+            Some(wacore_binary_ng::node::NodeContent::String(s)) => s.clone(),
+            Some(wacore_binary_ng::node::NodeContent::Bytes(b)) => {
                 String::from_utf8_lossy(b).into_owned()
             }
             _ => String::new(),
@@ -1064,7 +1064,7 @@ fn handle_disappearing_mode_notification(client: &Arc<Client>, node: &Node) {
     let Some(dm_node) = node.get_optional_child("disappearing_mode") else {
         warn!(
             "disappearing_mode notification missing <disappearing_mode> child: {}",
-            wacore::xml::DisplayableNode(node)
+            wacore_ng::xml::DisplayableNode(node)
         );
         return;
     };
@@ -1084,7 +1084,7 @@ fn handle_disappearing_mode_notification(client: &Arc<Client>, node: &Node) {
     else {
         warn!(
             "disappearing_mode notification missing or invalid 't' attribute: {}",
-            wacore::xml::DisplayableNode(node)
+            wacore_ng::xml::DisplayableNode(node)
         );
         return;
     };
@@ -1098,7 +1098,7 @@ fn handle_disappearing_mode_notification(client: &Arc<Client>, node: &Node) {
         .core
         .event_bus
         .dispatch(&Event::DisappearingModeChanged(
-            wacore::types::events::DisappearingModeChanged {
+            wacore_ng::types::events::DisappearingModeChanged {
                 from,
                 duration,
                 setting_timestamp,
@@ -1111,9 +1111,9 @@ mod tests {
     use super::*;
     use crate::test_utils::create_test_client;
     use std::sync::{Arc, Mutex};
-    use wacore::stanza::devices::DeviceNotificationType;
-    use wacore::types::events::{DeviceListUpdateType, EventHandler};
-    use wacore_binary::builder::NodeBuilder;
+    use wacore_ng::stanza::devices::DeviceNotificationType;
+    use wacore_ng::types::events::{DeviceListUpdateType, EventHandler};
+    use wacore_binary_ng::builder::NodeBuilder;
 
     #[derive(Default)]
     struct TestEventCollector {

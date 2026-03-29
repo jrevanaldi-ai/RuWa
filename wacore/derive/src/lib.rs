@@ -220,14 +220,14 @@ pub fn derive_protocol_node(input: TokenStream) -> TokenStream {
                 // StringEnum: parse using the `parse_string_enum` helper which tries TryFrom then From.
                 (AttrType::StringEnum, false, Some(default)) => {
                     quote! {
-                        #field_ident: ::wacore::protocol::parse_string_enum(
+                        #field_ident: ::wacore_ng::protocol::parse_string_enum(
                             node.attrs().optional_string(#attr_name).unwrap_or(#default)
                         )?
                     }
                 }
                 (AttrType::StringEnum, false, None) => {
                     quote! {
-                        #field_ident: ::wacore::protocol::parse_string_enum(
+                        #field_ident: ::wacore_ng::protocol::parse_string_enum(
                             node.attrs().optional_string(#attr_name)
                                 .ok_or_else(|| ::anyhow::anyhow!("missing required attribute '{}'", #attr_name))?
                         )?
@@ -236,7 +236,7 @@ pub fn derive_protocol_node(input: TokenStream) -> TokenStream {
                 (AttrType::StringEnum, true, _) => {
                     quote! {
                         #field_ident: node.attrs().optional_string(#attr_name)
-                            .map(|s| ::wacore::protocol::parse_string_enum(s))
+                            .map(|s| ::wacore_ng::protocol::parse_string_enum(s))
                             .transpose()?
                     }
                 }
@@ -290,7 +290,7 @@ pub fn derive_protocol_node(input: TokenStream) -> TokenStream {
                         quote! { #field_ident: #default.to_string() }
                     }
                     (AttrType::StringEnum, false, Some(default)) => {
-                        quote! { #field_ident: ::wacore::protocol::parse_string_enum(#default)
+                        quote! { #field_ident: ::wacore_ng::protocol::parse_string_enum(#default)
                         .expect("invalid default for StringEnum field") }
                     }
                     (AttrType::StringEnum, false, None) => {
@@ -315,18 +315,18 @@ pub fn derive_protocol_node(input: TokenStream) -> TokenStream {
     };
 
     let expanded = quote! {
-        impl ::wacore::protocol::ProtocolNode for #name {
+        impl ::wacore_ng::protocol::ProtocolNode for #name {
             fn tag(&self) -> &'static str {
                 #tag
             }
 
-            fn into_node(self) -> ::wacore_binary::node::Node {
-                let mut builder = ::wacore_binary::builder::NodeBuilder::new(#tag);
+            fn into_node(self) -> ::wacore_binary_ng::node::Node {
+                let mut builder = ::wacore_binary_ng::builder::NodeBuilder::new(#tag);
                 #(#attr_setters)*
                 builder.build()
             }
 
-            fn try_from_node(node: &::wacore_binary::node::Node) -> ::anyhow::Result<Self> {
+            fn try_from_node(node: &::wacore_binary_ng::node::Node) -> ::anyhow::Result<Self> {
                 if node.tag != #tag {
                     return Err(::anyhow::anyhow!("expected <{}>, got <{}>", #tag, node.tag));
                 }
@@ -379,16 +379,16 @@ pub fn derive_empty_node(input: TokenStream) -> TokenStream {
 
 fn generate_empty_impl(name: &syn::Ident, tag: &str) -> proc_macro2::TokenStream {
     quote! {
-        impl ::wacore::protocol::ProtocolNode for #name {
+        impl ::wacore_ng::protocol::ProtocolNode for #name {
             fn tag(&self) -> &'static str {
                 #tag
             }
 
-            fn into_node(self) -> ::wacore_binary::node::Node {
-                ::wacore_binary::builder::NodeBuilder::new(#tag).build()
+            fn into_node(self) -> ::wacore_binary_ng::node::Node {
+                ::wacore_binary_ng::builder::NodeBuilder::new(#tag).build()
             }
 
-            fn try_from_node(node: &::wacore_binary::node::Node) -> ::anyhow::Result<Self> {
+            fn try_from_node(node: &::wacore_binary_ng::node::Node) -> ::anyhow::Result<Self> {
                 if node.tag != #tag {
                     return Err(::anyhow::anyhow!("expected <{}>, got <{}>", #tag, node.tag));
                 }
@@ -778,7 +778,7 @@ pub fn derive_string_enum(input: TokenStream) -> TokenStream {
                 }
             }
 
-            impl ::wacore::protocol::ParseStringEnum for #name {
+            impl ::wacore_ng::protocol::ParseStringEnum for #name {
                 fn parse_from_str(s: &str) -> ::anyhow::Result<Self> {
                     Ok(::core::convert::From::from(s))
                 }
@@ -836,7 +836,7 @@ pub fn derive_string_enum(input: TokenStream) -> TokenStream {
                 }
             }
 
-            impl ::wacore::protocol::ParseStringEnum for #name {
+            impl ::wacore_ng::protocol::ParseStringEnum for #name {
                 fn parse_from_str(s: &str) -> ::anyhow::Result<Self> {
                     ::core::convert::TryFrom::try_from(s)
                 }

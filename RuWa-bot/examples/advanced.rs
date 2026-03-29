@@ -8,8 +8,8 @@ use ruwa_ureq_http_client::UreqHttpClient;
 use std::collections::HashMap;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use wacore::types::events::Event;
-use waproto::whatsapp as wa;
+use wacore_ng::types::events::Event;
+use waproto_ng::whatsapp as wa;
 
 /// Advanced bot with state management
 struct AdvancedBot {
@@ -62,7 +62,7 @@ impl AdvancedBot {
     async fn handle_message(
         &self,
         msg: wa::Message,
-        info: wacore::types::message::MessageInfo,
+        info: wacore_ng::types::message::MessageInfo,
         client: Arc<ruwa::client::Client>,
     ) {
         let Some(text) = msg.text_content() else {

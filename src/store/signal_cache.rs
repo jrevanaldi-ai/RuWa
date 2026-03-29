@@ -4,7 +4,7 @@ use std::sync::Arc;
 use anyhow::Result;
 use tokio::sync::Mutex;
 
-use wacore::store::traits::SignalStore;
+use wacore_ng::store::traits::SignalStore;
 
 /// In-memory cache for Signal protocol state, matching WhatsApp Web's SignalStoreCache.
 ///

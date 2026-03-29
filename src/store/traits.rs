@@ -1,1 +1,1 @@
-pub use wacore::store::traits::*;
+pub use wacore_ng::store::traits::*;

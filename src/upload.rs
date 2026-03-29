@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow};
 use base64::Engine;
 use serde::Deserialize;
-use wacore::download::MediaType;
+use wacore_ng::download::MediaType;
 
 use crate::client::Client;
 use crate::http::{HttpRequest, HttpResponse};
@@ -41,7 +41,7 @@ async fn upload_media_with_retry<
     ExecuteRequest,
     ExecuteRequestFut,
 >(
-    enc: &wacore::upload::EncryptedMedia,
+    enc: &wacore_ng::upload::EncryptedMedia,
     media_type: MediaType,
     file_length: u64,
     mut get_media_conn: GetMediaConn,
@@ -143,7 +143,7 @@ impl Client {
     pub async fn upload(&self, data: Vec<u8>, media_type: MediaType) -> Result<UploadResponse> {
         let enc = tokio::task::spawn_blocking({
             let data = data.clone();
-            move || wacore::upload::encrypt_media(&data, media_type)
+            move || wacore_ng::upload::encrypt_media(&data, media_type)
         })
         .await??;
 
@@ -183,7 +183,7 @@ mod tests {
 
     #[tokio::test]
     async fn upload_retries_with_forced_media_conn_refresh_after_auth_error() {
-        let enc = wacore::upload::encrypt_media(b"retry me", MediaType::Image)
+        let enc = wacore_ng::upload::encrypt_media(b"retry me", MediaType::Image)
             .expect("encryption should succeed");
         let first_conn = media_conn("stale-auth", &["cdn1.example.com"]);
         let refreshed_conn = media_conn("fresh-auth", &["cdn2.example.com"]);
@@ -255,7 +255,7 @@ mod tests {
 
     #[tokio::test]
     async fn upload_fails_over_to_next_host_after_non_auth_error() {
-        let enc = wacore::upload::encrypt_media(b"retry host", MediaType::Image)
+        let enc = wacore_ng::upload::encrypt_media(b"retry host", MediaType::Image)
             .expect("encryption should succeed");
         let conn = media_conn("shared-auth", &["cdn1.example.com", "cdn2.example.com"]);
         let seen_urls = Arc::new(Mutex::new(Vec::new()));

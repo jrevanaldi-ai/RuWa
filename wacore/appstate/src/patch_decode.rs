@@ -3,8 +3,8 @@
 use anyhow::{Result, anyhow};
 use prost::Message;
 use std::str::FromStr;
-use wacore_binary::node::Node;
-use waproto::whatsapp as wa;
+use wacore_binary_ng::node::Node;
+use waproto_ng::whatsapp as wa;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum WAPatchName {
@@ -126,7 +126,7 @@ fn parse_single_collection(collection: &Node) -> Result<PatchList> {
     // snapshot (optional)
     let mut snapshot_ref = None;
     if let Some(snapshot_node) = collection.get_optional_child("snapshot")
-        && let Some(wacore_binary::node::NodeContent::Bytes(raw)) = &snapshot_node.content
+        && let Some(wacore_binary_ng::node::NodeContent::Bytes(raw)) = &snapshot_node.content
         && let Ok(ext_ref) = wa::ExternalBlobReference::decode(raw.as_slice())
     {
         snapshot_ref = Some(ext_ref);
@@ -140,7 +140,7 @@ fn parse_single_collection(collection: &Node) -> Result<PatchList> {
     {
         for child in children {
             if child.tag == "patch"
-                && let Some(wacore_binary::node::NodeContent::Bytes(raw)) = &child.content
+                && let Some(wacore_binary_ng::node::NodeContent::Bytes(raw)) = &child.content
             {
                 match wa::SyncdPatch::decode(raw.as_slice()) {
                     Ok(p) => patches.push(p),

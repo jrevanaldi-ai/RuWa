@@ -1,5 +1,5 @@
 [package]
-name = "wacore"
+name = "wacore-ng"
 version = "1.0.0"
 edition = "2024"
 authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]
@@ -9,7 +9,7 @@ description = "Core WhatsApp protocol implementation without runtime dependencie
 
 [features]
 default = []
-simd = ["wacore-appstate/simd"]
+simd = ["wacore-appstate-ng/simd"]
 debug-snapshots = []
 
 [dependencies]
@@ -40,12 +40,12 @@ sha1 = { workspace = true }
 sha2 = { workspace = true }
 thiserror = { workspace = true }
 typed-builder = "0.23"
-wacore-appstate = { workspace = true }
-wacore-binary = { workspace = true, features = ["serde"] }
-wacore-derive = { workspace = true }
-wacore-libsignal = { workspace = true }
-wacore-noise = { workspace = true }
-waproto = { workspace = true }
+wacore-appstate-ng = { workspace = true }
+wacore-binary-ng = { workspace = true, features = ["serde"] }
+wacore-derive-ng = { workspace = true }
+wacore-libsignal-ng = { workspace = true }
+wacore-noise-ng = { workspace = true }
+waproto-ng = { workspace = true }
 
 [dev-dependencies]
 iai-callgrind = { workspace = true }

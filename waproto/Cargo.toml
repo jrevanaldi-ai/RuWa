@@ -1,5 +1,5 @@
 [package]
-name = "waproto"
+name = "waproto-ng"
 version = "1.0.0"
 edition = "2024"
 authors = ["Nathan <nathan@jrevanaldi-ai.github.io>"]

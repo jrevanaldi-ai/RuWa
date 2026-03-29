@@ -1,6 +1,6 @@
 use anyhow::Result;
 use async_trait::async_trait;
-use wacore::net::{HttpClient, HttpRequest, HttpResponse, StreamingHttpResponse};
+use wacore_ng::net::{HttpClient, HttpRequest, HttpResponse, StreamingHttpResponse};
 
 /// HTTP client implementation using `ureq` for synchronous HTTP requests.
 /// Since `ureq` is blocking, all requests are wrapped in `tokio::task::spawn_blocking`.

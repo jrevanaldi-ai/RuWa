@@ -1,6 +1,6 @@
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 
 #[tokio::test]
 async fn test_set_profile_picture() -> anyhow::Result<()> {

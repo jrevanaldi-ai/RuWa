@@ -17,7 +17,7 @@
 use moka::future::Cache;
 
 use crate::cache_config::{CacheConfig, CacheEntryConfig};
-pub use wacore::types::{LearningSource, LidPnEntry};
+pub use wacore_ng::types::{LearningSource, LidPnEntry};
 
 /// Cache for LID to Phone Number mappings.
 ///

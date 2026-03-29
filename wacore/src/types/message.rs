@@ -1,8 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::Deserialize;
 use serde::Serialize;
-use wacore_binary::jid::{Jid, JidExt, MessageId, MessageServerId};
-use waproto::whatsapp as wa;
+use wacore_binary_ng::jid::{Jid, JidExt, MessageId, MessageServerId};
+use waproto_ng::whatsapp as wa;
 
 /// Unique identifier for a message stanza within a chat.
 /// Used for deduplication and retry tracking.

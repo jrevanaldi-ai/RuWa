@@ -6,12 +6,12 @@ use prost::Message;
 use rand::TryRngCore;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
-use wacore::libsignal::protocol::KeyPair;
-use wacore_binary::jid::{Jid, SERVER_JID};
-use wacore_binary::node::{Node, NodeContent};
-use waproto::whatsapp as wa;
+use wacore_ng::libsignal::protocol::KeyPair;
+use wacore_binary_ng::jid::{Jid, SERVER_JID};
+use wacore_binary_ng::node::{Node, NodeContent};
+use waproto_ng::whatsapp as wa;
 
-pub use wacore::pair::{DeviceState, PairCryptoError, PairUtils};
+pub use wacore_ng::pair::{DeviceState, PairCryptoError, PairUtils};
 
 pub fn make_qr_data(store: &crate::store::Device, ref_str: String) -> String {
     let device_state = DeviceState {
@@ -124,7 +124,7 @@ async fn handle_pair_success(client: &Arc<Client>, request_node: &Node, success_
     }
 
     // Clear pair code state if active
-    *client.pair_code_state.lock().await = wacore::pair_code::PairCodeState::Completed;
+    *client.pair_code_state.lock().await = wacore_ng::pair_code::PairCodeState::Completed;
 
     client.update_server_time_offset(request_node);
 

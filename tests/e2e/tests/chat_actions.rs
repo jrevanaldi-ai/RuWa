@@ -1,6 +1,6 @@
 use e2e_tests::TestClient;
 use log::info;
-use ruwa::waproto::whatsapp as wa;
+use ruwa::waproto_ng::whatsapp as wa;
 
 // Note: These tests verify the full app state mutation pipeline (encode → encrypt →
 // send IQ → server acknowledgement). The mock server cannot decrypt mutations back,

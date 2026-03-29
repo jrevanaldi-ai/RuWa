@@ -6,9 +6,9 @@ use std::sync::atomic::Ordering;
 use std::time::Duration;
 use thiserror::Error;
 use tokio::time::timeout;
-use wacore_binary::node::Node;
+use wacore_binary_ng::node::Node;
 
-pub use wacore::request::{InfoQuery, InfoQueryType, RequestUtils};
+pub use wacore_ng::request::{InfoQuery, InfoQueryType, RequestUtils};
 
 #[derive(Debug, Error)]
 pub enum IqError {
@@ -28,17 +28,17 @@ pub enum IqError {
     ParseError(#[from] anyhow::Error),
 }
 
-impl From<wacore::request::IqError> for IqError {
-    fn from(err: wacore::request::IqError) -> Self {
+impl From<wacore_ng::request::IqError> for IqError {
+    fn from(err: wacore_ng::request::IqError) -> Self {
         match err {
-            wacore::request::IqError::Timeout => Self::Timeout,
-            wacore::request::IqError::NotConnected => Self::NotConnected,
-            wacore::request::IqError::Disconnected(node) => Self::Disconnected(node),
-            wacore::request::IqError::ServerError { code, text } => {
+            wacore_ng::request::IqError::Timeout => Self::Timeout,
+            wacore_ng::request::IqError::NotConnected => Self::NotConnected,
+            wacore_ng::request::IqError::Disconnected(node) => Self::Disconnected(node),
+            wacore_ng::request::IqError::ServerError { code, text } => {
                 Self::ServerError { code, text }
             }
-            wacore::request::IqError::InternalChannelClosed => Self::InternalChannelClosed,
-            wacore::request::IqError::Network(msg) => Self::Socket(SocketError::Crypto(msg)),
+            wacore_ng::request::IqError::InternalChannelClosed => Self::InternalChannelClosed,
+            wacore_ng::request::IqError::Network(msg) => Self::Socket(SocketError::Crypto(msg)),
         }
     }
 }
@@ -98,10 +98,10 @@ impl Client {
     /// # Example
     ///
     /// ```rust,no_run
-    /// use wacore::request::{InfoQuery, InfoQueryType};
-    /// use wacore_binary::builder::NodeBuilder;
-    /// use wacore_binary::node::NodeContent;
-    /// use wacore_binary::jid::{Jid, SERVER_JID};
+    /// use wacore_ng::request::{InfoQuery, InfoQueryType};
+    /// use wacore_binary_ng::builder::NodeBuilder;
+    /// use wacore_binary_ng::node::NodeContent;
+    /// use wacore_binary_ng::jid::{Jid, SERVER_JID};
     ///
     /// // This is a simplified example - real usage requires proper setup
     /// # async fn example(client: &ruwa::Client) -> Result<(), Box<dyn std::error::Error>> {
@@ -189,14 +189,14 @@ impl Client {
     /// # Example
     ///
     /// ```ignore
-    /// use wacore::iq::groups::GroupQueryIq;
+    /// use wacore_ng::iq::groups::GroupQueryIq;
     ///
     /// let group_info = client.execute(GroupQueryIq::new(&group_jid)).await?;
     /// println!("Group subject: {}", group_info.subject);
     /// ```
     pub async fn execute<S>(&self, spec: S) -> Result<S::Response, IqError>
     where
-        S: wacore::iq::spec::IqSpec,
+        S: wacore_ng::iq::spec::IqSpec,
     {
         let iq = spec.build_iq();
         let response = self.send_iq(iq).await?;

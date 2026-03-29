@@ -1,5 +1,5 @@
 use chrono::{DateTime, Utc};
-use wacore_binary::jid::Jid;
+use wacore_binary_ng::jid::Jid;
 
 #[derive(Debug, Clone)]
 pub struct BasicCallMeta {

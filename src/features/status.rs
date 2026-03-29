@@ -1,6 +1,6 @@
-use wacore::StringEnum;
-use wacore_binary::jid::Jid;
-use waproto::whatsapp as wa;
+use wacore_ng::StringEnum;
+use wacore_binary_ng::jid::Jid;
+use waproto_ng::whatsapp as wa;
 
 use crate::client::Client;
 use crate::upload::UploadResponse;
@@ -230,9 +230,9 @@ mod tests {
         let bg = 0xFF1E6E4F_u32;
         let font = 2_i32;
 
-        let message = waproto::whatsapp::Message {
+        let message = waproto_ng::whatsapp::Message {
             extended_text_message: Some(Box::new(
-                waproto::whatsapp::message::ExtendedTextMessage {
+                waproto_ng::whatsapp::message::ExtendedTextMessage {
                     text: Some(text.to_string()),
                     background_argb: Some(bg),
                     font: Some(font),
@@ -250,7 +250,7 @@ mod tests {
 
     #[test]
     fn test_status_revoke_message_structure() {
-        use waproto::whatsapp as wa;
+        use waproto_ng::whatsapp as wa;
 
         let original_id = "3EB06D00CAB92340790621";
         let to = Jid::status_broadcast();
@@ -282,7 +282,7 @@ mod tests {
 
     #[test]
     fn test_revoke_is_detected_as_revoke() {
-        use waproto::whatsapp as wa;
+        use waproto_ng::whatsapp as wa;
 
         // Non-revoke message
         let text_msg = wa::Message {

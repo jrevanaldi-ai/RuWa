@@ -3,9 +3,9 @@
 use anyhow::Result;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
-use wacore::libsignal::store::SessionStore;
-use wacore::types::jid::JidExt;
-use wacore_binary::jid::Jid;
+use wacore_ng::libsignal::store::SessionStore;
+use wacore_ng::types::jid::JidExt;
+use wacore_binary_ng::jid::Jid;
 
 use super::Client;
 use crate::types::events::{Event, OfflineSyncCompleted};
@@ -144,7 +144,7 @@ impl Client {
     /// Ensure E2E sessions exist for the given device JIDs.
     /// Waits for offline delivery, resolves LID mappings, then batches prekey fetches.
     pub(crate) async fn ensure_e2e_sessions(&self, device_jids: Vec<Jid>) -> Result<()> {
-        use wacore::types::jid::JidExt;
+        use wacore_ng::types::jid::JidExt;
 
         if device_jids.is_empty() {
             return Ok(());
@@ -189,8 +189,8 @@ impl Client {
     /// Returns the number of sessions successfully established.
     async fn fetch_and_establish_sessions(&self, jids: &[Jid]) -> Result<usize, anyhow::Error> {
         use rand::TryRngCore;
-        use wacore::libsignal::protocol::{UsePQRatchet, process_prekey_bundle};
-        use wacore::types::jid::JidExt;
+        use wacore_ng::libsignal::protocol::{UsePQRatchet, process_prekey_bundle};
+        use wacore_ng::types::jid::JidExt;
 
         if jids.is_empty() {
             return Ok(0);
@@ -348,7 +348,7 @@ impl Client {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wacore_binary::jid::{DEFAULT_USER_SERVER, HIDDEN_USER_SERVER, JidExt};
+    use wacore_binary_ng::jid::{DEFAULT_USER_SERVER, HIDDEN_USER_SERVER, JidExt};
 
     #[test]
     fn test_primary_phone_jid_creation_from_pn() {
@@ -488,7 +488,7 @@ mod tests {
     /// Protocol address format: {user}[:device]@{server}.0
     #[test]
     fn test_protocol_address_format_for_session_lookup() {
-        use wacore::types::jid::JidExt;
+        use wacore_ng::types::jid::JidExt;
 
         let pn = Jid::pn("559999999999").with_device(0);
         let addr = pn.to_protocol_address();
@@ -556,7 +556,7 @@ mod tests {
         assert_ne!(pn_address.user, lid_address.user);
         assert_ne!(pn_address.server, lid_address.server);
 
-        use wacore::types::jid::JidExt;
+        use wacore_ng::types::jid::JidExt;
         let pn_signal_addr = pn_address.to_protocol_address();
         let lid_signal_addr = lid_address.to_protocol_address();
 
@@ -624,7 +624,7 @@ mod tests {
     #[test]
     fn test_session_establishment_lookup_normalization() {
         use std::collections::HashMap;
-        use wacore_binary::jid::Jid;
+        use wacore_binary_ng::jid::Jid;
 
         // Represents the bundle map returned by fetch_pre_keys
         // (keys are normalized by parsing logic as verified in wacore/src/prekeys.rs)

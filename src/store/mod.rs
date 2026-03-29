@@ -16,12 +16,12 @@ use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Device {
-    pub core: wacore::store::Device,
+    pub core: wacore_ng::store::Device,
     pub backend: Arc<dyn Backend>,
 }
 
 impl Deref for Device {
-    type Target = wacore::store::Device;
+    type Target = wacore_ng::store::Device;
 
     fn deref(&self) -> &Self::Target {
         &self.core
@@ -36,15 +36,15 @@ impl DerefMut for Device {
 
 impl Device {
     pub fn new(backend: Arc<dyn Backend>) -> Self {
-        let core = wacore::store::Device::new();
+        let core = wacore_ng::store::Device::new();
         Self { core, backend }
     }
 
-    pub fn to_serializable(&self) -> wacore::store::Device {
+    pub fn to_serializable(&self) -> wacore_ng::store::Device {
         self.core.clone()
     }
 
-    pub fn load_from_serializable(&mut self, loaded: wacore::store::Device) {
+    pub fn load_from_serializable(&mut self, loaded: wacore_ng::store::Device) {
         self.core = loaded;
     }
 }

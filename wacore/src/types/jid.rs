@@ -1,5 +1,5 @@
 use crate::libsignal::protocol::ProtocolAddress;
-use wacore_binary::jid::Jid;
+use wacore_binary_ng::jid::Jid;
 
 pub trait JidExt {
     fn to_protocol_address(&self) -> ProtocolAddress;

@@ -6,16 +6,16 @@ use prost::Message;
 use rand::TryRngCore;
 use scopeguard;
 use std::sync::Arc;
-use wacore::iq::prekeys::{OneTimePreKeyNode, SignedPreKeyNode};
-use wacore::libsignal::protocol::{
+use wacore_ng::iq::prekeys::{OneTimePreKeyNode, SignedPreKeyNode};
+use wacore_ng::libsignal::protocol::{
     KeyPair, PreKeyBundle, PublicKey, UsePQRatchet, process_prekey_bundle,
 };
-use wacore::libsignal::store::PreKeyStore;
-use wacore::protocol::ProtocolNode;
-use wacore::types::jid::JidExt;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::JidExt as _;
-use wacore_binary::node::{Node, NodeContent};
+use wacore_ng::libsignal::store::PreKeyStore;
+use wacore_ng::protocol::ProtocolNode;
+use wacore_ng::types::jid::JidExt;
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::JidExt as _;
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// Helper to extract bytes content from a Node.
 fn get_bytes_content(node: &Node) -> Option<&[u8]> {
@@ -158,7 +158,7 @@ impl Client {
         // Reuse the participant string extracted earlier (same source: node's
         // `participant` attribute for groups/status, receipt.source.sender for DMs).
         let participant_jid = participant_str
-            .parse::<wacore_binary::jid::Jid>()
+            .parse::<wacore_binary_ng::jid::Jid>()
             .unwrap_or_else(|_| receipt.source.sender.clone());
 
         // Device existence check (matches WhatsApp Web's WAWebApiDeviceList.hasDevice).
@@ -215,7 +215,7 @@ impl Client {
 
                     if let Some(data) = session_data
                         && let Ok(session) =
-                            wacore::libsignal::protocol::SessionRecord::deserialize(&data)
+                            wacore_ng::libsignal::protocol::SessionRecord::deserialize(&data)
                         && let Ok(stored_reg_id) = session.remote_registration_id()
                         && stored_reg_id != 0
                         && stored_reg_id != received_reg_id
@@ -319,7 +319,7 @@ impl Client {
 
                 if let Some(data) = session_data
                     && let Ok(session) =
-                        wacore::libsignal::protocol::SessionRecord::deserialize(&data)
+                        wacore_ng::libsignal::protocol::SessionRecord::deserialize(&data)
                     && let Ok(current_base_key) = session.alice_base_key()
                 {
                     if retry_count == MIN_RETRY_FOR_BASE_KEY_CHECK {
@@ -434,7 +434,7 @@ impl Client {
     async fn process_retry_key_bundle(
         &self,
         node: &Node,
-        requester_jid: &wacore_binary::jid::Jid,
+        requester_jid: &wacore_binary_ng::jid::Jid,
         is_peer: bool,
     ) -> Result<(), anyhow::Error> {
         let keys_node = node
@@ -482,7 +482,7 @@ impl Client {
             drop(device_guard);
 
             if let Some(data) = session_data
-                && let Ok(session) = wacore::libsignal::protocol::SessionRecord::deserialize(&data)
+                && let Ok(session) = wacore_ng::libsignal::protocol::SessionRecord::deserialize(&data)
             {
                 let existing_reg_id = session.remote_registration_id()?;
                 if existing_reg_id != 0 && existing_reg_id != registration_id {
@@ -661,7 +661,7 @@ impl Client {
 
             let new_prekey_id = (rand::random::<u32>() % 16777215) + 1;
             let new_prekey_keypair = KeyPair::generate(&mut rand::rngs::OsRng.unwrap_err());
-            let new_prekey_record = wacore::libsignal::store::record_helpers::new_pre_key_record(
+            let new_prekey_record = wacore_ng::libsignal::store::record_helpers::new_pre_key_record(
                 new_prekey_id,
                 &new_prekey_keypair,
             );
@@ -781,8 +781,8 @@ mod tests {
     use super::*;
     use crate::store::persistence_manager::PersistenceManager;
     use crate::test_utils::MockHttpClient;
-    use wacore_binary::jid::{Jid, JidExt};
-    use waproto::whatsapp as wa;
+    use wacore_binary_ng::jid::{Jid, JidExt};
+    use waproto_ng::whatsapp as wa;
 
     #[tokio::test]
     async fn recent_message_cache_insert_and_take() {
@@ -836,7 +836,7 @@ mod tests {
 
     #[test]
     fn get_bytes_content_extracts_bytes() {
-        use wacore_binary::node::{Attrs, Node};
+        use wacore_binary_ng::node::{Attrs, Node};
 
         // Test with bytes content
         let node = Node {
@@ -878,8 +878,8 @@ mod tests {
     /// Matches WhatsApp Web's sendRetryReceipt: if (to.isUser()) { if (isMeAccount(to)) { ... } }
     #[test]
     fn retry_receipt_attributes_for_device_sync_vs_peer_vs_group() {
-        use wacore::types::message::{MessageInfo, MessageSource};
-        use wacore_binary::builder::NodeBuilder;
+        use wacore_ng::types::message::{MessageInfo, MessageSource};
+        use wacore_binary_ng::builder::NodeBuilder;
 
         let our_pn = Jid::pn("559999999999");
         let our_lid = Jid::lid("100000000000001");
@@ -888,7 +888,7 @@ mod tests {
             info: &MessageInfo,
             our_pn: &Jid,
             our_lid: &Jid,
-        ) -> wacore_binary::node::Node {
+        ) -> wacore_binary_ng::node::Node {
             let mut builder = NodeBuilder::new("receipt")
                 .attr("to", info.source.sender.to_string())
                 .attr("id", info.id.clone())
@@ -1198,7 +1198,7 @@ mod tests {
     #[test]
     fn bot_jid_detection() {
         // Test bot JID detection for bot message filtering
-        use wacore_binary::jid::JidExt as _;
+        use wacore_binary_ng::jid::JidExt as _;
 
         // Regular user JID - not a bot
         let regular_user: Jid = "1234567890@s.whatsapp.net".parse().unwrap();
@@ -1223,7 +1223,7 @@ mod tests {
 
     #[test]
     fn extract_registration_id_from_node_test() {
-        use wacore_binary::node::{Attrs, Node};
+        use wacore_binary_ng::node::{Attrs, Node};
 
         // Test with 4-byte registration ID
         let reg_bytes = vec![0x00, 0x01, 0x02, 0x03]; // = 66051
@@ -1281,7 +1281,7 @@ mod tests {
     #[test]
     fn group_or_status_detection_for_sender_key_handling() {
         // Test that both groups and status broadcasts trigger sender key handling
-        use wacore_binary::jid::JidExt as _;
+        use wacore_binary_ng::jid::JidExt as _;
 
         let group: Jid = "120363021033254949@g.us".parse().unwrap();
         let status: Jid = "status@broadcast".parse().unwrap();
@@ -1504,7 +1504,7 @@ mod tests {
     /// retrying device, while `receipt.source.sender` may be `status@broadcast`.
     #[test]
     fn status_broadcast_participant_extraction() {
-        use wacore_binary::builder::NodeBuilder;
+        use wacore_binary_ng::builder::NodeBuilder;
 
         // Simulate a retry receipt for a status broadcast with participant attribute
         let node = NodeBuilder::new("receipt")
@@ -1538,7 +1538,7 @@ mod tests {
     /// Test fallback when participant attribute is missing from status receipt.
     #[test]
     fn status_broadcast_participant_extraction_fallback() {
-        use wacore_binary::builder::NodeBuilder;
+        use wacore_binary_ng::builder::NodeBuilder;
 
         // Receipt without participant attribute (edge case)
         let node = NodeBuilder::new("receipt")

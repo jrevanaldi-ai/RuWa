@@ -16,7 +16,7 @@ use std::sync::Arc;
 use thiserror::Error;
 use tokio::sync::mpsc;
 use tokio::task;
-use waproto::whatsapp as wa;
+use waproto_ng::whatsapp as wa;
 
 #[derive(Debug, Error)]
 pub enum BotBuilderError {
@@ -54,7 +54,7 @@ impl MessageContext {
     pub fn build_quote_context(&self) -> wa::ContextInfo {
         // Use the standalone function from wacore with full message info
         // This handles newsletter/group status participant resolution
-        wacore::proto_helpers::build_quote_context_with_info(
+        wacore_ng::proto_helpers::build_quote_context_with_info(
             &self.info.id,
             &self.info.source.sender,
             &self.info.source.chat,
@@ -384,7 +384,7 @@ impl BotBuilder {
     ///
     /// # Example
     /// ```rust,ignore
-    /// use waproto::whatsapp::device_props::{self, PlatformType};
+    /// use waproto_ng::whatsapp::device_props::{self, PlatformType};
     ///
     /// // Show as "Chrome" on linked devices
     /// let bot = Bot::builder()
@@ -843,7 +843,7 @@ mod tests {
         // Version should be the default since we didn't override it
         assert_eq!(
             device.device_props.version,
-            Some(wacore::store::Device::default_device_props_version())
+            Some(wacore_ng::store::Device::default_device_props_version())
         );
     }
 
@@ -878,7 +878,7 @@ mod tests {
         // OS should be the default since we didn't override it
         assert_eq!(
             device.device_props.os,
-            Some(wacore::store::Device::default_os().to_string())
+            Some(wacore_ng::store::Device::default_os().to_string())
         );
     }
 
@@ -909,11 +909,11 @@ mod tests {
         // OS and version should remain default
         assert_eq!(
             device.device_props.os,
-            Some(wacore::store::Device::default_os().to_string())
+            Some(wacore_ng::store::Device::default_os().to_string())
         );
         assert_eq!(
             device.device_props.version,
-            Some(wacore::store::Device::default_device_props_version())
+            Some(wacore_ng::store::Device::default_device_props_version())
         );
     }
 

@@ -1,9 +1,9 @@
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 use ruwa::download::{Downloadable, MediaType};
 use ruwa::upload::UploadResponse;
-use ruwa::waproto::whatsapp as wa;
+use ruwa::waproto_ng::whatsapp as wa;
 
 /// Helper: build an ImageMessage from an UploadResponse.
 fn build_image_message(upload: &UploadResponse, caption: Option<&str>) -> wa::Message {

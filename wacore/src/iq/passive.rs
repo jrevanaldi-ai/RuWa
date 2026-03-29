@@ -21,9 +21,9 @@
 
 use crate::iq::spec::IqSpec;
 use crate::request::InfoQuery;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::{Jid, SERVER_JID};
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::{Jid, SERVER_JID};
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// IQ namespace for passive mode.
 pub const PASSIVE_NAMESPACE: &str = "passive";

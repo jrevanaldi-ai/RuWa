@@ -5,7 +5,7 @@ use rand::Rng;
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use std::time::Duration;
-use wacore::iq::spec::IqSpec;
+use wacore_ng::iq::spec::IqSpec;
 
 /// Returns the number of milliseconds elapsed since a stored timestamp.
 /// Returns `None` if the timestamp was never set (value 0).
@@ -97,7 +97,7 @@ impl Client {
         debug!(target: "Client/Keepalive", "Sending keepalive ping");
 
         let start_ms = chrono::Utc::now().timestamp_millis();
-        let iq = wacore::iq::keepalive::KeepaliveSpec::with_timeout(KEEP_ALIVE_RESPONSE_DEADLINE)
+        let iq = wacore_ng::iq::keepalive::KeepaliveSpec::with_timeout(KEEP_ALIVE_RESPONSE_DEADLINE)
             .build_iq();
         match self.send_iq(iq).await {
             Ok(response_node) => {
@@ -197,7 +197,7 @@ impl Client {
 mod tests {
     use super::*;
     use crate::socket::error::SocketError;
-    use wacore_binary::builder::NodeBuilder;
+    use wacore_binary_ng::builder::NodeBuilder;
 
     #[test]
     fn test_classify_timeout_is_transient() {

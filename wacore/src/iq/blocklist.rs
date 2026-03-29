@@ -10,9 +10,9 @@ use crate::protocol::ProtocolNode;
 use crate::request::InfoQuery;
 use anyhow::Result;
 use log::warn;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::{Jid, SERVER_JID};
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::{Jid, SERVER_JID};
+use wacore_binary_ng::node::{Node, NodeContent};
 /// IQ namespace for blocklist operations.
 pub const BLOCKLIST_IQ_NAMESPACE: &str = "blocklist";
 /// Action to perform on a blocklist entry.

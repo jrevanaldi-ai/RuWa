@@ -20,12 +20,12 @@ use anyhow::Result;
 use chrono::DateTime;
 use log::debug;
 use std::sync::Arc;
-use wacore::appstate::patch_decode::WAPatchName;
-use wacore::types::events::{
+use wacore_ng::appstate::patch_decode::WAPatchName;
+use wacore_ng::types::events::{
     ArchiveUpdate, ContactUpdate, Event, MarkChatAsReadUpdate, MuteUpdate, PinUpdate, StarUpdate,
 };
-use wacore_binary::jid::{Jid, JidExt};
-use waproto::whatsapp as wa;
+use wacore_binary_ng::jid::{Jid, JidExt};
+use waproto_ng::whatsapp as wa;
 
 /// Mute end timestamp value for indefinite mute (matches WhatsApp Web's `-1` sentinel).
 const MUTE_INDEFINITE: i64 = -1;
@@ -37,7 +37,7 @@ const MUTE_INDEFINITE: i64 = -1;
 /// Handles: mute, pin, pin_v1, archive, star, contact, mark_chat_as_read.
 /// Returns `true` if the mutation was handled, `false` if unknown.
 pub(crate) fn dispatch_chat_mutation(
-    event_bus: &wacore::types::events::CoreEventBus,
+    event_bus: &wacore_ng::types::events::CoreEventBus,
     m: &Mutation,
     full_sync: bool,
 ) -> bool {
@@ -419,7 +419,7 @@ impl<'a> ChatActions<'a> {
         value: &wa::SyncActionValue,
     ) -> Result<()> {
         use rand::RngCore;
-        use wacore::appstate::encode::encode_record;
+        use wacore_ng::appstate::encode::encode_record;
 
         let proc = self.client.get_app_state_processor().await;
         let key_id = proc

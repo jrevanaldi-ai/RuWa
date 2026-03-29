@@ -8,7 +8,7 @@
 
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 
 /// Test that typing indicators (chatstate) are NOT delivered when they expire.
 ///

@@ -12,8 +12,8 @@
 
 use crate::iq::spec::IqSpec;
 use crate::request::InfoQuery;
-use wacore_binary::jid::DEFAULT_USER_SERVER;
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::jid::DEFAULT_USER_SERVER;
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// IQ spec for setting the user's own status text (about).
 pub struct SetStatusTextSpec {

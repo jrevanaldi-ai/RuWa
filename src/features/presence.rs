@@ -1,11 +1,11 @@
 use crate::client::Client;
 use log::{debug, warn};
 use thiserror::Error;
-use wacore::StringEnum;
-use wacore::iq::tctoken::build_tc_token_node;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::jid::Jid;
-use wacore_binary::node::Node;
+use wacore_ng::StringEnum;
+use wacore_ng::iq::tctoken::build_tc_token_node;
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::jid::Jid;
+use wacore_binary_ng::node::Node;
 
 #[derive(Debug, Error)]
 pub enum PresenceError {
@@ -233,7 +233,7 @@ mod tests {
     use anyhow::Result;
     use std::str::FromStr;
     use std::sync::Arc;
-    use wacore::store::traits::Backend;
+    use wacore_ng::store::traits::Backend;
     use ruwa_tokio_transport::TokioWebSocketTransportFactory;
 
     // Mock HTTP client for testing

@@ -5,8 +5,8 @@
 use crate::iq::node::{optional_attr, optional_child};
 use anyhow::{Result, anyhow};
 use serde::Serialize;
-use wacore_binary::jid::Jid;
-use wacore_binary::node::{Node, NodeContent};
+use wacore_binary_ng::jid::Jid;
+use wacore_binary_ng::node::{Node, NodeContent};
 
 /// Business notification type based on child element.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -363,7 +363,7 @@ impl BusinessNotification {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use wacore_binary::builder::NodeBuilder;
+    use wacore_binary_ng::builder::NodeBuilder;
 
     #[test]
     fn test_parse_remove_jid_notification() {

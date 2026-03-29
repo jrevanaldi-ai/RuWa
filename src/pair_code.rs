@@ -51,13 +51,13 @@ use crate::types::events::Event;
 use log::{error, info, warn};
 use rand::TryRngCore;
 use std::sync::Arc;
-use wacore::libsignal::protocol::KeyPair;
-use wacore::pair_code::{PairCodeError, PairCodeState, PairCodeUtils};
-use wacore_binary::jid::{Jid, SERVER_JID};
-use wacore_binary::node::{Node, NodeContent};
+use wacore_ng::libsignal::protocol::KeyPair;
+use wacore_ng::pair_code::{PairCodeError, PairCodeState, PairCodeUtils};
+use wacore_binary_ng::jid::{Jid, SERVER_JID};
+use wacore_binary_ng::node::{Node, NodeContent};
 
 // Re-export types for user convenience
-pub use wacore::pair_code::{PairCodeOptions, PlatformId};
+pub use wacore_ng::pair_code::{PairCodeOptions, PlatformId};
 
 impl Client {
     /// Initiates pair code authentication as an alternative to QR code pairing.

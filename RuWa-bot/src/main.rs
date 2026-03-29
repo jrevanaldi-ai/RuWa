@@ -12,8 +12,8 @@ use ruwa::store::SqliteStore;
 use ruwa_tokio_transport::TokioWebSocketTransportFactory;
 use ruwa_ureq_http_client::UreqHttpClient;
 use std::sync::Arc;
-use wacore::types::events::Event;
-use waproto::whatsapp as wa;
+use wacore_ng::types::events::Event;
+use waproto_ng::whatsapp as wa;
 
 #[tokio::main]
 async fn main() -> Result<()> {

@@ -7,11 +7,11 @@ use crate::store::commands::DeviceCommand;
 use anyhow::Result;
 use log::{debug, warn};
 use std::sync::Arc;
-use wacore::iq::contacts::SetProfilePictureSpec;
-use wacore::iq::profile::SetStatusTextSpec;
-use wacore_binary::builder::NodeBuilder;
+use wacore_ng::iq::contacts::SetProfilePictureSpec;
+use wacore_ng::iq::profile::SetStatusTextSpec;
+use wacore_binary_ng::builder::NodeBuilder;
 
-pub use wacore::iq::contacts::SetProfilePictureResponse;
+pub use wacore_ng::iq::contacts::SetProfilePictureResponse;
 
 /// Feature handle for profile operations.
 pub struct Profile<'a> {
@@ -120,8 +120,8 @@ impl<'a> Profile<'a> {
     /// Build and send the `setting_pushName` app state mutation.
     async fn send_push_name_mutation(&self, name: &str) -> Result<()> {
         use rand::RngCore;
-        use wacore::appstate::encode::encode_record;
-        use waproto::whatsapp as wa;
+        use wacore_ng::appstate::encode::encode_record;
+        use waproto_ng::whatsapp as wa;
 
         let index = serde_json::to_vec(&["setting_pushName"])?;
 

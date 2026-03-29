@@ -17,8 +17,8 @@ use std::sync::Arc;
 
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
-use ruwa::waproto::whatsapp as wa;
+use wacore_ng::types::events::Event;
+use ruwa::waproto_ng::whatsapp as wa;
 
 /// Regression test: prekey ID collision on re-upload after non-sequential consumption.
 ///

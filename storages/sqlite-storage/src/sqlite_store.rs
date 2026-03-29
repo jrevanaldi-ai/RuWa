@@ -10,14 +10,14 @@ use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
 use log::warn;
 use prost::Message;
 use std::sync::Arc;
-use wacore::appstate::hash::HashState;
-use wacore::appstate::processor::AppStateMutationMAC;
-use wacore::libsignal::protocol::{KeyPair, PrivateKey, PublicKey};
-use wacore::store::Device as CoreDevice;
-use wacore::store::error::{Result, StoreError};
-use wacore::store::traits::*;
-use wacore_binary::jid::Jid;
-use waproto::whatsapp as wa;
+use wacore_ng::appstate::hash::HashState;
+use wacore_ng::appstate::processor::AppStateMutationMAC;
+use wacore_ng::libsignal::protocol::{KeyPair, PrivateKey, PublicKey};
+use wacore_ng::store::Device as CoreDevice;
+use wacore_ng::store::error::{Result, StoreError};
+use wacore_ng::store::traits::*;
+use wacore_binary_ng::jid::Jid;
+use waproto_ng::whatsapp as wa;
 
 /// Internal error type that preserves the Diesel error for structured matching
 /// before converting to `StoreError`. Used in retry loops where we need to
@@ -394,7 +394,7 @@ impl SqliteStore {
                 .get()
                 .map_err(|e| StoreError::Connection(e.to_string()))?;
 
-            let new_device = wacore::store::Device::new();
+            let new_device = wacore_ng::store::Device::new();
 
             let noise_key_data = {
                 let mut bytes = Vec::with_capacity(64);
@@ -567,7 +567,7 @@ impl SqliteStore {
                 app_version_tertiary: app_version_tertiary.try_into().unwrap_or(0u32),
                 app_version_last_fetched_ms,
                 device_props: {
-                    use wacore::store::device::DEVICE_PROPS;
+                    use wacore_ng::store::device::DEVICE_PROPS;
                     DEVICE_PROPS.clone()
                 },
                 edge_routing_info,

@@ -7,9 +7,9 @@ use prost::Message;
 use serde::Serialize;
 use std::fmt;
 use std::sync::{Arc, OnceLock, RwLock};
-use wacore_binary::jid::{Jid, MessageId};
-use wacore_binary::node::Node;
-use waproto::whatsapp::{self as wa, HistorySync};
+use wacore_binary_ng::jid::{Jid, MessageId};
+use wacore_binary_ng::node::Node;
+use waproto_ng::whatsapp::{self as wa, HistorySync};
 
 /// Wrapper for large event data that uses Arc for cheap cloning.
 /// This avoids cloning large protobuf messages when dispatching events.
@@ -296,7 +296,7 @@ pub struct BusinessStatusUpdate {
 #[derive(Debug, Clone, Serialize)]
 pub struct DisappearingModeChanged {
     /// The contact whose setting changed.
-    pub from: wacore_binary::jid::Jid,
+    pub from: wacore_binary_ng::jid::Jid,
     /// New duration in seconds (0 = disabled, 86400 = 24h, etc.).
     pub duration: u32,
     /// Unix timestamp (seconds) when the setting was changed.

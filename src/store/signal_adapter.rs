@@ -3,15 +3,15 @@ use crate::store::signal_cache::SignalStoreCache;
 use async_trait::async_trait;
 use std::sync::Arc;
 use tokio::sync::RwLock;
-use wacore::libsignal::protocol::{
+use wacore_ng::libsignal::protocol::{
     Direction, IdentityChange, IdentityKey, IdentityKeyPair, IdentityKeyStore, PreKeyId,
     PreKeyRecord, PreKeyStore, ProtocolAddress, SessionRecord, SessionStore, SignalProtocolError,
     SignedPreKeyId, SignedPreKeyRecord, SignedPreKeyStore,
 };
 
-use wacore::libsignal::store::record_helpers as wacore_record;
-use wacore::libsignal::store::sender_key_name::SenderKeyName;
-use wacore::libsignal::store::{
+use wacore_ng::libsignal::store::record_helpers as wacore_record;
+use wacore_ng::libsignal::store::sender_key_name::SenderKeyName;
+use wacore_ng::libsignal::store::{
     PreKeyStore as WacorePreKeyStore, SignedPreKeyStore as WacoreSignedPreKeyStore,
 };
 
@@ -217,7 +217,7 @@ impl IdentityKeyStore for IdentityAdapter {
             Some(data) if !data.is_empty() => {
                 // Cache and backend store raw 32-byte DJB public key bytes
                 let public_key =
-                    wacore::libsignal::protocol::PublicKey::from_djb_public_key_bytes(&data)?;
+                    wacore_ng::libsignal::protocol::PublicKey::from_djb_public_key_bytes(&data)?;
                 Ok(Some(IdentityKey::new(public_key)))
             }
             _ => Ok(None),
@@ -277,12 +277,12 @@ impl SignedPreKeyStore for SignedPreKeyAdapter {
 }
 
 #[async_trait]
-impl wacore::libsignal::protocol::SenderKeyStore for SenderKeyAdapter {
+impl wacore_ng::libsignal::protocol::SenderKeyStore for SenderKeyAdapter {
     async fn store_sender_key(
         &mut self,
         sender_key_name: &SenderKeyName,
-        record: &wacore::libsignal::protocol::SenderKeyRecord,
-    ) -> wacore::libsignal::protocol::error::Result<()> {
+        record: &wacore_ng::libsignal::protocol::SenderKeyRecord,
+    ) -> wacore_ng::libsignal::protocol::error::Result<()> {
         let key = format!(
             "{}:{}",
             sender_key_name.group_id(),
@@ -296,8 +296,8 @@ impl wacore::libsignal::protocol::SenderKeyStore for SenderKeyAdapter {
     async fn load_sender_key(
         &mut self,
         sender_key_name: &SenderKeyName,
-    ) -> wacore::libsignal::protocol::error::Result<
-        Option<wacore::libsignal::protocol::SenderKeyRecord>,
+    ) -> wacore_ng::libsignal::protocol::error::Result<
+        Option<wacore_ng::libsignal::protocol::SenderKeyRecord>,
     > {
         let key = format!(
             "{}:{}",
@@ -311,13 +311,13 @@ impl wacore::libsignal::protocol::SenderKeyStore for SenderKeyAdapter {
             .get_sender_key(&key, &*device.backend)
             .await
             .map_err(|e| {
-                wacore::libsignal::protocol::SignalProtocolError::InvalidState(
+                wacore_ng::libsignal::protocol::SignalProtocolError::InvalidState(
                     "backend",
                     e.to_string(),
                 )
             })? {
             Some(data) => Ok(Some(
-                wacore::libsignal::protocol::SenderKeyRecord::deserialize(&data)?,
+                wacore_ng::libsignal::protocol::SenderKeyRecord::deserialize(&data)?,
             )),
             None => Ok(None),
         }

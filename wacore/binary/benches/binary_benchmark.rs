@@ -6,13 +6,13 @@ use iai_callgrind::{
 };
 use std::hint::black_box;
 use std::io::Write;
-use wacore_binary::builder::NodeBuilder;
-use wacore_binary::marshal::{
+use wacore_binary_ng::builder::NodeBuilder;
+use wacore_binary_ng::marshal::{
     marshal, marshal_auto, marshal_exact, marshal_ref, marshal_ref_auto, marshal_ref_exact,
     marshal_to, marshal_to_vec, unmarshal_ref,
 };
-use wacore_binary::node::Node;
-use wacore_binary::util::unpack;
+use wacore_binary_ng::node::Node;
+use wacore_binary_ng::util::unpack;
 
 fn create_small_node() -> Node {
     NodeBuilder::new("message")

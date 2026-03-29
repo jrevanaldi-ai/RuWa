@@ -593,7 +593,7 @@ dependencies = [
  "ruwa-ureq-http-client",
  "tokio",
  "uuid",
- "wacore",
+ "wacore-ng",
 ]
 
 [[package]]
@@ -1821,9 +1821,9 @@ dependencies = [
  "thiserror 2.0.18",
  "tokio",
  "uuid",
- "wacore",
- "wacore-binary",
- "waproto",
+ "wacore-binary-ng",
+ "wacore-ng",
+ "waproto-ng",
 ]
 
 [[package]]
@@ -1838,9 +1838,9 @@ dependencies = [
  "prost",
  "serde_json",
  "tokio",
- "wacore",
- "wacore-binary",
- "waproto",
+ "wacore-binary-ng",
+ "wacore-ng",
+ "waproto-ng",
 ]
 
 [[package]]
@@ -1858,7 +1858,7 @@ dependencies = [
  "tokio",
  "tokio-rustls",
  "tokio-websockets",
- "wacore",
+ "wacore-ng",
  "webpki-roots",
 ]
 
@@ -1870,7 +1870,7 @@ dependencies = [
  "async-trait",
  "tokio",
  "ureq",
- "wacore",
+ "wacore-ng",
 ]
 
 [[package]]
@@ -2442,7 +2442,82 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "051eb1abcf10076295e815102942cc58f9d5e3b4560e46e53c21e8ff6f3af7b1"
 
 [[package]]
-name = "wacore"
+name = "wacore-appstate-ng"
+version = "1.0.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "hex",
+ "hkdf",
+ "log",
+ "prost",
+ "serde",
+ "serde-big-array",
+ "serde_json",
+ "sha2",
+ "thiserror 2.0.18",
+ "wacore-binary-ng",
+ "wacore-libsignal-ng",
+ "waproto-ng",
+]
+
+[[package]]
+name = "wacore-binary-ng"
+version = "1.0.0"
+dependencies = [
+ "flate2",
+ "iai-callgrind",
+ "phf",
+ "phf_codegen",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "wacore-derive-ng"
+version = "1.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
+name = "wacore-libsignal-ng"
+version = "1.0.0"
+dependencies = [
+ "aes",
+ "aes-gcm",
+ "arrayref",
+ "async-trait",
+ "cbc",
+ "chrono",
+ "ctr",
+ "curve25519-dalek",
+ "derive_more",
+ "displaydoc",
+ "futures",
+ "ghash 0.6.0",
+ "hex",
+ "hkdf",
+ "hmac",
+ "iai-callgrind",
+ "itertools",
+ "log",
+ "prost",
+ "rand",
+ "serde",
+ "sha1",
+ "sha2",
+ "subtle",
+ "thiserror 2.0.18",
+ "uuid",
+ "waproto-ng",
+ "x25519-dalek",
+]
+
+[[package]]
+name = "wacore-ng"
 version = "1.0.0"
 dependencies = [
  "aes",
@@ -2473,91 +2548,16 @@ dependencies = [
  "sha2",
  "thiserror 2.0.18",
  "typed-builder",
- "wacore-appstate",
- "wacore-binary",
- "wacore-derive",
- "wacore-libsignal",
- "wacore-noise",
- "waproto",
+ "wacore-appstate-ng",
+ "wacore-binary-ng",
+ "wacore-derive-ng",
+ "wacore-libsignal-ng",
+ "wacore-noise-ng",
+ "waproto-ng",
 ]
 
 [[package]]
-name = "wacore-appstate"
-version = "1.0.0"
-dependencies = [
- "anyhow",
- "bytemuck",
- "hex",
- "hkdf",
- "log",
- "prost",
- "serde",
- "serde-big-array",
- "serde_json",
- "sha2",
- "thiserror 2.0.18",
- "wacore-binary",
- "wacore-libsignal",
- "waproto",
-]
-
-[[package]]
-name = "wacore-binary"
-version = "1.0.0"
-dependencies = [
- "flate2",
- "iai-callgrind",
- "phf",
- "phf_codegen",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "wacore-derive"
-version = "1.0.0"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "wacore-libsignal"
-version = "1.0.0"
-dependencies = [
- "aes",
- "aes-gcm",
- "arrayref",
- "async-trait",
- "cbc",
- "chrono",
- "ctr",
- "curve25519-dalek",
- "derive_more",
- "displaydoc",
- "futures",
- "ghash 0.6.0",
- "hex",
- "hkdf",
- "hmac",
- "iai-callgrind",
- "itertools",
- "log",
- "prost",
- "rand",
- "serde",
- "sha1",
- "sha2",
- "subtle",
- "thiserror 2.0.18",
- "uuid",
- "waproto",
- "x25519-dalek",
-]
-
-[[package]]
-name = "wacore-noise"
+name = "wacore-noise-ng"
 version = "1.0.0"
 dependencies = [
  "aes-gcm",
@@ -2569,13 +2569,13 @@ dependencies = [
  "rand",
  "sha2",
  "thiserror 2.0.18",
- "wacore-binary",
- "wacore-libsignal",
- "waproto",
+ "wacore-binary-ng",
+ "wacore-libsignal-ng",
+ "waproto-ng",
 ]
 
 [[package]]
-name = "waproto"
+name = "waproto-ng"
 version = "1.0.0"
 dependencies = [
  "prost",

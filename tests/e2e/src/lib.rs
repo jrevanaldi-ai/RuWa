@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use wacore::types::events::{Event, EventHandler};
+use wacore_ng::types::events::{Event, EventHandler};
 use ruwa::bot::Bot;
 use ruwa::store::traits::Backend;
 use ruwa_sqlite_storage::SqliteStore;

@@ -1,12 +1,12 @@
 use e2e_tests::TestClient;
 use log::info;
-use wacore::types::events::Event;
+use wacore_ng::types::events::Event;
 use ruwa::Jid;
 use ruwa::NodeFilter;
 use ruwa::features::{
     GroupCreateOptions, GroupParticipantOptions, MembershipApprovalMode,
 };
-use ruwa::waproto::whatsapp as wa;
+use ruwa::waproto_ng::whatsapp as wa;
 
 /// Wait for a group message with specific text on a specific group.
 async fn wait_for_group_message(
