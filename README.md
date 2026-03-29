@@ -308,6 +308,38 @@ RUST_LOG=info cargo run
 | Delivery receipts | ✅ |
 | Played receipts (audio) | ✅ |
 
+### 🏓 Connection Monitoring (Ping)
+
+| Feature | Status | Latency Target |
+|---------|--------|----------------|
+| Manual ping | ✅ `client.ping()` | < 200ms |
+| Custom timeout | ✅ `client.ping_with_timeout()` | Configurable |
+| Ping statistics | ✅ `client.ping_multiple()` | Min/Max/Avg/Jitter |
+| Quality metrics | ✅ `is_good()`, `is_moderate()`, `is_poor()` | Auto-classified |
+
+**Contoh Penggunaan:**
+
+```rust
+use ruwa::Client;
+
+// Ping sederhana
+let ping = client.ping().await?;
+println!("RTT: {}ms", ping.rtt_ms);
+
+// Cek kualitas koneksi
+if ping.is_good() {
+    println!("✓ Koneksi bagus (< 200ms)");
+}
+
+// Ping berulang untuk statistik
+let stats = client.ping_multiple(5, None).await?;
+println!("Min: {}ms, Max: {}ms, Avg: {:.2}ms", 
+         stats.min_rtt_ms, stats.max_rtt_ms, stats.avg_rtt_ms);
+println!("Kualitas: {}", stats.quality_rating());
+```
+
+> 📖 **Dokumentasi Lengkap**: Lihat [examples/ping_example.md](examples/ping_example.md)
+
 ---
 
 ## 🔐 Autentikasi Detail
