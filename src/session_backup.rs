@@ -1,48 +1,48 @@
-//! Session Backup & Restore System
-//!
-//! Provides encrypted backup and restore functionality for WhatsApp session data.
-//! Supports local file backup, cloud storage (S3, GCS), and automatic scheduled backups.
-//!
-//! # Features
-//!
-//! - **Encrypted Backup**: AES-256-GCM encryption with password
-//! - **Multiple Storage**: Local file, S3, Google Cloud Storage
-//! - **Auto Backup**: Scheduled automatic backups with rotation
-//! - **Versioning**: Keep multiple backup versions
-//! - **Quick Restore**: One-click session restoration
-//!
-//! # Example
-//!
-//! ```rust,no_run
-//! use ruwa::Client;
-//! use std::sync::Arc;
-//!
-//! #[tokio::main]
-//! async fn main() -> anyhow::Result<()> {
-//!     let client: Arc<Client> = /* ... */;
-//!
-//!     // Backup session to file
-//!     client.backup_session()
-//!         .to_file("session_backup.enc")
-//!         .with_password("secure_password")
-//!         .await?;
-//!
-//!     // Restore session from file
-//!     client.restore_session()
-//!         .from_file("session_backup.enc")
-//!         .with_password("secure_password")
-//!         .await?;
-//!
-//!     // Enable auto-backup (every hour, keep last 10)
-//!     client.enable_auto_backup()
-//!         .interval(std::time::Duration::from_secs(3600))
-//!         .to_directory("./backups")
-//!         .keep_last(10)
-//!         .start().await?;
-//!
-//!     Ok(())
-//! }
-//! ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 use aes_gcm::{
     aead::{Aead, KeyInit},
@@ -63,22 +63,22 @@ use tokio::{
     time,
 };
 
-/// Backup metadata stored alongside encrypted data
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct BackupMetadata {
-    /// Backup creation timestamp
+    
     pub created_at: DateTime<Utc>,
-    /// RuWa version used for backup
+    
     pub ruwa_version: String,
-    /// WhatsApp web version
+    
     pub wa_version: String,
-    /// Phone number associated with session (masked)
+    
     pub phone_masked: Option<String>,
-    /// Backup size in bytes
+    
     pub size_bytes: u64,
-    /// Backup checksum for integrity verification
+    
     pub checksum: String,
-    /// Additional notes or tags
+    
     pub tags: Vec<String>,
 }
 
@@ -95,7 +95,7 @@ impl BackupMetadata {
         }
     }
 
-    /// Mask phone number for privacy (e.g., "6281234567890" → "628****7890")
+    
     pub fn mask_phone(phone: &str) -> String {
         if phone.len() > 8 {
             format!("{}****{}", &phone[..4], &phone[phone.len() - 4..])
@@ -104,7 +104,7 @@ impl BackupMetadata {
         }
     }
 
-    /// Calculate SHA256 checksum of data
+    
     pub fn calculate_checksum(data: &[u8]) -> String {
         use sha2::{Digest, Sha256};
         let mut hasher = Sha256::new();
@@ -119,16 +119,16 @@ impl Default for BackupMetadata {
     }
 }
 
-/// Configuration for session backup
+
 #[derive(Debug, Clone)]
 pub struct BackupConfig {
-    /// Destination path for backup file
+    
     pub destination: PathBuf,
-    /// Encryption password (optional, recommended for security)
+    
     pub password: Option<String>,
-    /// Backup metadata tags
+    
     pub tags: Vec<String>,
-    /// Compression enabled (default: true)
+    
     pub compress: bool,
 }
 
@@ -167,14 +167,14 @@ impl BackupConfig {
     }
 }
 
-/// Configuration for session restore
+
 #[derive(Debug, Clone)]
 pub struct RestoreConfig {
-    /// Source path for backup file
+    
     pub source: PathBuf,
-    /// Decryption password (if backup was encrypted)
+    
     pub password: Option<String>,
-    /// Skip version check (use with caution)
+    
     pub skip_version_check: bool,
 }
 
@@ -207,27 +207,27 @@ impl RestoreConfig {
     }
 }
 
-/// Configuration for automatic backup scheduler
+
 #[derive(Debug, Clone)]
 pub struct AutoBackupConfig {
-    /// Backup interval duration
+    
     pub interval: Duration,
-    /// Directory to store backups
+    
     pub directory: PathBuf,
-    /// Number of backups to keep (0 = unlimited)
+    
     pub keep_last: u32,
-    /// Filename prefix for backups
+    
     pub filename_prefix: String,
-    /// Enable compression
+    
     pub compress: bool,
-    /// Encryption password (optional)
+    
     pub password: Option<String>,
 }
 
 impl Default for AutoBackupConfig {
     fn default() -> Self {
         Self {
-            interval: Duration::from_secs(3600), // 1 hour
+            interval: Duration::from_secs(3600), 
             directory: PathBuf::from("./backups"),
             keep_last: 10,
             filename_prefix: "session".to_string(),
@@ -267,54 +267,54 @@ impl AutoBackupConfig {
     }
 }
 
-/// Result of backup operation
+
 #[derive(Debug, Clone)]
 pub struct BackupResult {
-    /// Path to backup file
+    
     pub file_path: PathBuf,
-    /// Backup metadata
+    
     pub metadata: BackupMetadata,
-    /// Backup size in bytes
+    
     pub size_bytes: u64,
-    /// Whether encryption was used
+    
     pub encrypted: bool,
 }
 
-/// Result of restore operation
+
 #[derive(Debug, Clone)]
 pub struct RestoreResult {
-    /// Whether restore was successful
+    
     pub success: bool,
-    /// Number of items restored
+    
     pub items_restored: usize,
-    /// Backup metadata
+    
     pub backup_metadata: BackupMetadata,
-    /// Warnings during restore
+    
     pub warnings: Vec<String>,
 }
 
-/// Session data to be backed up
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SessionData {
-    /// Identity key pair
+    
     pub identity_key_pair: Option<Vec<u8>>,
-    /// Registration ID
+    
     pub registration_id: Option<u32>,
-    /// PreKeys
+    
     pub prekeys: Vec<(u32, Vec<u8>)>,
-    /// Signed prekeys
+    
     pub signed_prekeys: Vec<(u32, Vec<u8>)>,
-    /// Sessions with other users
+    
     pub sessions: Vec<(String, Vec<u8>)>,
-    /// Sender keys for groups
+    
     pub sender_keys: Vec<(String, Vec<u8>)>,
-    /// Device information
+    
     pub device_info: Option<Vec<u8>>,
-    /// App state sync keys
+    
     pub app_state_keys: Vec<(Vec<u8>, Vec<u8>)>,
-    /// LID-PN mappings
+    
     pub lid_pn_mappings: Vec<(String, String)>,
-    /// Device registry
+    
     pub device_registry: Vec<(String, Vec<u8>)>,
 }
 
@@ -341,7 +341,7 @@ impl Default for SessionData {
     }
 }
 
-/// Builder for backup operations
+
 pub struct BackupBuilder {
     manager: Arc<SessionBackupManager>,
     client: Arc<crate::Client>,
@@ -382,7 +382,7 @@ impl BackupBuilder {
     }
 }
 
-/// Builder for restore operations
+
 pub struct RestoreBuilder {
     manager: Arc<SessionBackupManager>,
     client: Arc<crate::Client>,
@@ -418,7 +418,7 @@ impl RestoreBuilder {
     }
 }
 
-/// Builder for auto-backup configuration
+
 pub struct AutoBackupBuilder {
     manager: Arc<SessionBackupManager>,
     client: Arc<crate::Client>,
@@ -469,15 +469,15 @@ impl AutoBackupBuilder {
     }
 }
 
-/// Backup manager handles session backup and restore operations
+
 pub struct SessionBackupManager {
-    /// Configuration for auto-backup
+    
     auto_backup_config: RwLock<Option<AutoBackupConfig>>,
-    /// Handle for auto-backup task
+    
     auto_backup_handle: Mutex<Option<tokio::task::JoinHandle<()>>>,
-    /// Last backup timestamp
+    
     last_backup: RwLock<Option<DateTime<Utc>>>,
-    /// Backup counter for statistics
+    
     backup_count: Mutex<u64>,
 }
 
@@ -491,9 +491,9 @@ impl SessionBackupManager {
         }
     }
 
-    /// Encrypt data using AES-256-GCM
+    
     fn encrypt_data(data: &[u8], password: &str) -> Result<Vec<u8>, anyhow::Error> {
-        // Derive key from password using PBKDF2
+        
         use pbkdf2::pbkdf2_hmac;
         use sha2::Sha256;
 
@@ -510,7 +510,7 @@ impl SessionBackupManager {
         let nonce = Nonce::from_slice(&nonce_bytes);
         let ciphertext = cipher.encrypt(nonce, data)?;
 
-        // Prepend salt and nonce to ciphertext
+        
         let mut result = Vec::with_capacity(salt.len() + nonce.len() + ciphertext.len());
         result.extend_from_slice(&salt);
         result.extend_from_slice(&nonce_bytes);
@@ -519,7 +519,7 @@ impl SessionBackupManager {
         Ok(result)
     }
 
-    /// Decrypt data using AES-256-GCM
+    
     fn decrypt_data(encrypted: &[u8], password: &str) -> Result<Vec<u8>, anyhow::Error> {
         use pbkdf2::pbkdf2_hmac;
         use sha2::Sha256;
@@ -542,7 +542,7 @@ impl SessionBackupManager {
         Ok(plaintext)
     }
 
-    /// Compress data using flate2
+    
     fn compress_data(data: &[u8]) -> Result<Vec<u8>, anyhow::Error> {
         use flate2::write::GzEncoder;
         use flate2::Compression;
@@ -553,7 +553,7 @@ impl SessionBackupManager {
         Ok(encoder.finish()?)
     }
 
-    /// Decompress data using flate2
+    
     fn decompress_data(data: &[u8]) -> Result<Vec<u8>, anyhow::Error> {
         use flate2::read::GzDecoder;
         use std::io::Read;
@@ -564,7 +564,7 @@ impl SessionBackupManager {
         Ok(decompressed)
     }
 
-    /// Collect session data from client
+    
     pub async fn collect_session_data(
         &self,
         client: &crate::Client,
@@ -573,11 +573,11 @@ impl SessionBackupManager {
 
         let mut session_data = SessionData::new();
 
-        // Collect device info from persistence manager
+        
         let device = client.persistence_manager.get_device_arc().await;
         let device_guard = device.read().await;
         
-        // Serialize device snapshot
+        
         if let Some(pn) = device_guard.pn.as_ref() {
             session_data.device_info = Some(pn.to_string().into_bytes());
         }
@@ -592,7 +592,7 @@ impl SessionBackupManager {
         Ok(session_data)
     }
 
-    /// Backup session to file
+    
     pub async fn backup_to_file(
         &self,
         client: &crate::Client,
@@ -600,20 +600,20 @@ impl SessionBackupManager {
     ) -> Result<BackupResult, anyhow::Error> {
         info!("Starting session backup to {:?}", config.destination);
 
-        // Collect session data
+        
         let session_data = self.collect_session_data(client).await?;
 
-        // Serialize to JSON
+        
         let mut data = serde_json::to_vec(&session_data)
             .map_err(|e| anyhow::anyhow!("Failed to serialize session data: {}", e))?;
 
-        // Compress if enabled
+        
         if config.compress {
             debug!("Compressing backup data...");
             data = Self::compress_data(&data)?;
         }
 
-        // Encrypt if password provided
+        
         let encrypted = if let Some(password) = &config.password {
             debug!("Encrypting backup data...");
             Self::encrypt_data(&data, password)?
@@ -621,13 +621,13 @@ impl SessionBackupManager {
             data
         };
 
-        // Create metadata
+        
         let mut metadata = BackupMetadata::new();
         metadata.size_bytes = encrypted.len() as u64;
         metadata.checksum = BackupMetadata::calculate_checksum(&encrypted);
         metadata.tags = config.tags;
 
-        // Get phone number if available
+        
         let device = client.persistence_manager.get_device_arc().await;
         let device_guard = device.read().await;
         if let Some(pn) = device_guard.pn.as_ref() {
@@ -635,12 +635,12 @@ impl SessionBackupManager {
         }
         drop(device_guard);
 
-        // Ensure parent directory exists
+        
         if let Some(parent) = config.destination.parent() {
             fs::create_dir_all(parent).await?;
         }
 
-        // Write to file
+        
         fs::write(&config.destination, &encrypted).await?;
 
         info!(
@@ -650,7 +650,7 @@ impl SessionBackupManager {
             config.password.is_some()
         );
 
-        // Update last backup timestamp
+        
         *self.last_backup.write().await = Some(Utc::now());
         *self.backup_count.lock().await += 1;
 
@@ -662,7 +662,7 @@ impl SessionBackupManager {
         })
     }
 
-    /// Restore session from file
+    
     pub async fn restore_from_file(
         &self,
         client: &crate::Client,
@@ -670,10 +670,10 @@ impl SessionBackupManager {
     ) -> Result<RestoreResult, anyhow::Error> {
         info!("Starting session restore from {:?}", config.source);
 
-        // Read encrypted data
+        
         let encrypted = fs::read(&config.source).await?;
 
-        // Decrypt if password provided
+        
         let mut data = if let Some(password) = &config.password {
             debug!("Decrypting backup data...");
             Self::decrypt_data(&encrypted, password)?
@@ -681,24 +681,24 @@ impl SessionBackupManager {
             encrypted
         };
 
-        // Decompress if needed (detect gzip magic number)
+        
         if data.starts_with(&[0x1f, 0x8b]) {
             debug!("Decompressing backup data...");
             data = Self::decompress_data(&data)?;
         }
 
-        // Deserialize session data
+        
         let session_data: SessionData = serde_json::from_slice(&data)
             .map_err(|e| anyhow::anyhow!("Failed to deserialize session data: {}", e))?;
 
-        // Restore to client
+        
         let mut warnings = Vec::new();
         let mut items_restored = 0;
 
-        // Restore device info (phone number)
+        
         if let Some(device_info) = session_data.device_info {
-            // For now, we just log the restored phone number
-            // Full device restore requires more complex integration
+            
+            
             if let Ok(phone) = String::from_utf8(device_info.clone()) {
                 info!("Restored session for phone: {}", BackupMetadata::mask_phone(&phone));
                 items_restored += 1;
@@ -719,7 +719,7 @@ impl SessionBackupManager {
         })
     }
 
-    /// Start automatic backup scheduler
+    
     pub async fn start_auto_backup(
         &self,
         client: Arc<crate::Client>,
@@ -730,13 +730,13 @@ impl SessionBackupManager {
             config.interval, config.keep_last
         );
 
-        // Ensure backup directory exists
+        
         fs::create_dir_all(&config.directory).await?;
 
-        // Store config
+        
         *self.auto_backup_config.write().await = Some(config.clone());
 
-        // Spawn backup task
+        
         let handle = tokio::spawn({
             let backup_manager = Arc::new(self.clone());
             async move {
@@ -746,7 +746,7 @@ impl SessionBackupManager {
 
                     info!("Auto-backup triggered...");
 
-                    // Generate filename with timestamp
+                    
                     let timestamp = Utc::now().format("%Y%m%d_%H%M%S");
                     let filename = format!(
                         "{}_{}.enc",
@@ -754,7 +754,7 @@ impl SessionBackupManager {
                     );
                     let backup_path = config.directory.join(&filename);
 
-                    // Create backup config
+                    
                     let backup_config = BackupConfig {
                         destination: backup_path.clone(),
                         password: config.password.clone(),
@@ -762,7 +762,7 @@ impl SessionBackupManager {
                         compress: config.compress,
                     };
 
-                    // Perform backup
+                    
                     match backup_manager.backup_to_file(&client, backup_config).await {
                         Ok(result) => {
                             info!(
@@ -770,7 +770,7 @@ impl SessionBackupManager {
                                 result.file_path, result.size_bytes
                             );
 
-                            // Cleanup old backups if keep_last > 0
+                            
                             if config.keep_last > 0 {
                                 if let Err(e) =
                                     backup_manager.cleanup_old_backups(&config.directory, config.keep_last).await
@@ -792,7 +792,7 @@ impl SessionBackupManager {
         Ok(())
     }
 
-    /// Stop automatic backup scheduler
+    
     pub async fn stop_auto_backup(&self) {
         info!("Stopping auto-backup scheduler...");
 
@@ -803,7 +803,7 @@ impl SessionBackupManager {
         *self.auto_backup_config.write().await = None;
     }
 
-    /// Cleanup old backups, keeping only the last N files
+    
     async fn cleanup_old_backups(
         &self,
         directory: &Path,
@@ -811,7 +811,7 @@ impl SessionBackupManager {
     ) -> Result<(), anyhow::Error> {
         debug!("Cleaning up old backups, keeping last {}", keep_last);
 
-        // Use blocking std::fs for simplicity
+        
         let entries = std::fs::read_dir(directory)?;
         let mut backup_files: Vec<PathBuf> = entries
             .filter_map(|entry| entry.ok().map(|e| e.path()))
@@ -821,14 +821,14 @@ impl SessionBackupManager {
             })
             .collect();
 
-        // Sort by modification time (newest first)
+        
         backup_files.sort_by(|a: &PathBuf, b: &PathBuf| {
             let a_time = a.metadata().ok().and_then(|m| m.modified().ok()).unwrap_or(std::time::SystemTime::UNIX_EPOCH);
             let b_time = b.metadata().ok().and_then(|m| m.modified().ok()).unwrap_or(std::time::SystemTime::UNIX_EPOCH);
             b_time.cmp(&a_time)
         });
 
-        // Delete old backups
+        
         for path in backup_files.iter().skip(keep_last as usize) {
             if let Err(e) = fs::remove_file(path).await {
                 warn!("Failed to delete old backup {:?}: {}", path, e);
@@ -840,7 +840,7 @@ impl SessionBackupManager {
         Ok(())
     }
 
-    /// Get backup statistics
+    
     pub async fn get_backup_stats(&self) -> BackupStats {
         let backup_count = *self.backup_count.lock().await;
         let last_backup = *self.last_backup.read().await;
@@ -871,14 +871,14 @@ impl Default for SessionBackupManager {
     }
 }
 
-/// Statistics about backup operations
+
 #[derive(Debug, Clone)]
 pub struct BackupStats {
-    /// Total number of backups performed
+    
     pub total_backups: u64,
-    /// Timestamp of last backup
+    
     pub last_backup: Option<DateTime<Utc>>,
-    /// Whether auto-backup is enabled
+    
     pub auto_backup_enabled: bool,
 }
 
@@ -911,7 +911,7 @@ mod tests {
         let decrypted = SessionBackupManager::decrypt_data(&encrypted, password).unwrap();
 
         assert_eq!(data.to_vec(), decrypted);
-        assert!(encrypted.len() > data.len()); // Encrypted data should be larger
+        assert!(encrypted.len() > data.len()); 
     }
 
     #[test]
@@ -922,7 +922,7 @@ mod tests {
         let decompressed = SessionBackupManager::decompress_data(&compressed).unwrap();
 
         assert_eq!(data.to_vec(), decompressed);
-        assert!(compressed.len() < data.len()); // Compressed data should be smaller
+        assert!(compressed.len() < data.len()); 
     }
 
     #[test]
@@ -947,7 +947,7 @@ mod tests {
         let checksum2 = BackupMetadata::calculate_checksum(data2);
         let checksum1_again = BackupMetadata::calculate_checksum(data1);
 
-        assert_eq!(checksum1, checksum1_again); // Same data = same checksum
-        assert_ne!(checksum1, checksum2); // Different data = different checksum
+        assert_eq!(checksum1, checksum1_again); 
+        assert_ne!(checksum1, checksum2); 
     }
 }
