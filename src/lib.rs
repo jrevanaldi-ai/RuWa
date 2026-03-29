@@ -20,6 +20,8 @@ pub mod mediaconn;
 pub mod message;
 pub mod pair;
 pub mod pair_code;
+pub mod reconnect;
+pub use reconnect::{ConnectionState, ReconnectConfig, ReconnectManager, ReconnectMetrics};
 pub mod request;
 pub mod send;
 pub use send::{RevokeType, SendOptions};

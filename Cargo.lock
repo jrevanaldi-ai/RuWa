@@ -1810,6 +1810,7 @@ dependencies = [
  "hex",
  "log",
  "moka",
+ "parking_lot",
  "prost",
  "rand",
  "ruwa-sqlite-storage",
