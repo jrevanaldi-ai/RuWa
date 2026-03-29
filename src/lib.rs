@@ -27,7 +27,10 @@ pub mod send;
 pub use send::{RevokeType, SendOptions};
 pub mod session;
 pub mod session_backup;
-pub use session_backup::{BackupConfig, BackupResult, BackupStats, RestoreConfig, RestoreResult, SessionBackupManager};
+pub use session_backup::{
+    AutoBackupBuilder, AutoBackupConfig, BackupBuilder, BackupConfig, BackupResult, BackupStats,
+    RestoreBuilder, RestoreConfig, RestoreResult, SessionBackupManager,
+};
 pub mod socket;
 pub mod store;
 pub mod transport;

@@ -21,7 +21,8 @@ use crate::handlers::chatstate::ChatStateEvent;
 use crate::jid_utils::server_jid;
 use crate::reconnect::{ConnectionState, ReconnectConfig};
 use crate::session_backup::{
-    AutoBackupConfig, BackupConfig, BackupResult, BackupStats, RestoreConfig, RestoreResult,
+    AutoBackupBuilder, AutoBackupConfig, BackupBuilder, BackupConfig, BackupResult, BackupStats,
+    RestoreBuilder, RestoreConfig, RestoreResult,
 };
 use crate::store::{commands::DeviceCommand, persistence_manager::PersistenceManager};
 use crate::types::enc_handler::EncHandler;
@@ -983,8 +984,8 @@ impl Client {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn backup_session(&self) -> BackupBuilder {
-        BackupBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    pub fn backup_session(self: &Arc<Self>) -> BackupBuilder {
+        BackupBuilder::new(self.session_backup_manager.clone(), self.clone())
     }
 
     /// Create a restore builder for session data.
@@ -1005,8 +1006,8 @@ impl Client {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn restore_session(&self) -> RestoreBuilder {
-        RestoreBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    pub fn restore_session(self: &Arc<Self>) -> RestoreBuilder {
+        RestoreBuilder::new(self.session_backup_manager.clone(), self.clone())
     }
 
     /// Enable automatic session backup with specified configuration.
@@ -1032,8 +1033,8 @@ impl Client {
     /// # Ok(())
     /// # }
     /// ```
-    pub fn enable_auto_backup(&self) -> AutoBackupBuilder {
-        AutoBackupBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    pub fn enable_auto_backup(self: &Arc<Self>) -> AutoBackupBuilder {
+        AutoBackupBuilder::new(self.session_backup_manager.clone(), self.clone())
     }
 
     /// Disable automatic session backup.
