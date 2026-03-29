@@ -20,6 +20,9 @@ use crate::appstate_sync::AppStateProcessor;
 use crate::handlers::chatstate::ChatStateEvent;
 use crate::jid_utils::server_jid;
 use crate::reconnect::{ConnectionState, ReconnectConfig};
+use crate::session_backup::{
+    AutoBackupConfig, BackupConfig, BackupResult, BackupStats, RestoreConfig, RestoreResult,
+};
 use crate::store::{commands::DeviceCommand, persistence_manager::PersistenceManager};
 use crate::types::enc_handler::EncHandler;
 use crate::types::events::{ConnectFailureReason, Event};
@@ -322,6 +325,9 @@ pub struct Client {
     /// Cache configuration for TTL and capacity of all caches.
     /// Stored for use by lazily-initialized caches (group_cache, device_cache).
     pub(crate) cache_config: CacheConfig,
+
+    /// Session backup manager for backup and restore operations
+    pub(crate) session_backup_manager: Arc<crate::session_backup::SessionBackupManager>,
 }
 
 impl Client {
@@ -510,6 +516,7 @@ impl Client {
             skip_history_sync: AtomicBool::new(false),
             cache_config,
             reconnect_manager: Arc::new(crate::reconnect::ReconnectManager::with_defaults()),
+            session_backup_manager: Arc::new(crate::session_backup::SessionBackupManager::new()),
         };
 
         let arc = Arc::new(this);
@@ -955,6 +962,115 @@ impl Client {
     pub fn is_connection_healthy(&self) -> bool {
         self.reconnect_manager.is_healthy()
     }
+
+    // ==================== Session Backup & Restore ====================
+
+    /// Create a backup builder for session data.
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use ruwa::Client;
+    /// use std::sync::Arc;
+    ///
+    /// # async fn example(client: Arc<Client>) -> anyhow::Result<()> {
+    /// // Backup session to file with encryption
+    /// let result = client.backup_session()
+    ///     .to_file("session_backup.enc")
+    ///     .with_password("secure_password")
+    ///     .run()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn backup_session(&self) -> BackupBuilder {
+        BackupBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    }
+
+    /// Create a restore builder for session data.
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use ruwa::Client;
+    /// use std::sync::Arc;
+    ///
+    /// # async fn example(client: Arc<Client>) -> anyhow::Result<()> {
+    /// // Restore session from encrypted backup
+    /// let result = client.restore_session()
+    ///     .from_file("session_backup.enc")
+    ///     .with_password("secure_password")
+    ///     .run()
+    ///     .await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn restore_session(&self) -> RestoreBuilder {
+        RestoreBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    }
+
+    /// Enable automatic session backup with specified configuration.
+    ///
+    /// # Arguments
+    ///
+    /// * `config` - Auto backup configuration (interval, directory, retention)
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use ruwa::Client;
+    /// use std::{sync::Arc, time::Duration};
+    ///
+    /// # async fn example(client: Arc<Client>) -> anyhow::Result<()> {
+    /// // Enable auto-backup every hour, keep last 10 backups
+    /// client.enable_auto_backup()
+    ///     .interval(Duration::from_secs(3600))
+    ///     .to_directory("./backups")
+    ///     .keep_last(10)
+    ///     .with_password("secure_password")
+    ///     .start().await?;
+    /// # Ok(())
+    /// # }
+    /// ```
+    pub fn enable_auto_backup(&self) -> AutoBackupBuilder {
+        AutoBackupBuilder::new(self.session_backup_manager.clone(), Arc::new(self.clone()))
+    }
+
+    /// Disable automatic session backup.
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use ruwa::Client;
+    ///
+    /// # async fn example(client: &Client) {
+    /// client.disable_auto_backup().await;
+    /// # }
+    /// ```
+    pub async fn disable_auto_backup(&self) {
+        self.session_backup_manager.stop_auto_backup().await;
+        info!("Auto-backup disabled");
+    }
+
+    /// Get backup statistics.
+    ///
+    /// # Example
+    ///
+    /// ```rust,no_run
+    /// use ruwa::Client;
+    ///
+    /// # async fn example(client: &Client) {
+    /// let stats = client.get_backup_stats().await;
+    /// println!("Total backups: {}", stats.total_backups);
+    /// println!("Last backup: {:?}", stats.last_backup);
+    /// println!("Auto-backup enabled: {}", stats.auto_backup_enabled);
+    /// # }
+    /// ```
+    pub async fn get_backup_stats(&self) -> BackupStats {
+        self.session_backup_manager.get_backup_stats().await
+    }
+
+    // ==================== Helper Methods ====================
 
     async fn cleanup_connection_state(&self) {
         self.is_logged_in.store(false, Ordering::Relaxed);
