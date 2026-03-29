@@ -4,6 +4,7 @@ mod chatstate;
 mod contacts;
 mod groups;
 mod mex;
+mod ping;
 mod presence;
 mod profile;
 pub(crate) mod status;
@@ -24,6 +25,8 @@ pub use groups::{
 };
 
 pub use mex::{Mex, MexError, MexErrorExtensions, MexGraphQLError, MexRequest, MexResponse};
+
+pub use ping::{PingResult, PingStatistics};
 
 pub use presence::{Presence, PresenceError, PresenceStatus};
 

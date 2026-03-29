@@ -8,10 +8,10 @@ license = "MIT"
 
 [dependencies]
 # RuWa WhatsApp library
-ruwa = { path = ".." }
-ruwa-sqlite-storage = { path = "../storages/sqlite-storage" }
-ruwa-tokio-transport = { path = "../transports/tokio-transport" }
-ruwa-ureq-http-client = { path = "../http_clients/ureq-client" }
+ruwa = { version = "1.0.0" }
+ruwa-sqlite-storage = { version = "1.0.0" }
+ruwa-tokio-transport = { version = "1.0.0" }
+ruwa-ureq-http-client = { version = "1.0.0" }
 
 # Async runtime
 tokio = { version = "1.48", features = ["full"] }
@@ -27,5 +27,5 @@ toml = "0.9"
 rand = "0.9"
 
 # Waproto for WhatsApp message types
-waproto = { path = "../waproto" }
-wacore = { path = "../wacore" }
+waproto-ng = { version = "1.0.0" }
+wacore-ng = { version = "1.0.0" }
