@@ -1074,6 +1074,7 @@ Terima kasih kepada project yang menginspirasi:
 - [**Baileys**](https://github.com/WhiskeySockets/Baileys) - TypeScript WhatsApp library
 - **WhatsApp Web** - Sebagai referensi protokol
 
+- *Thanks To https://github.com/jlucaso1/whatsapp-rust/ sebagai base utama dari project ini*
 ---
 
 <div align="center">
