@@ -42,7 +42,6 @@ logs/
 /.cargo
 
 # Documentation
-docs/
 
 # Claude
 .claude
